@@ -1,0 +1,2251 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>阳东消防考核管理系统</title>
+    
+    <!-- 网站图标 -->
+    <link rel="icon" href="https://img.icons8.com/color/96/000000/fire-station.png">
+    
+    <!-- 外部资源 -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js"></script>
+    <script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
+    
+    <!-- 美化版CSS样式 -->
+    <style>
+        /* ===== 高级主题变量 ===== */
+        :root {
+            --primary: #0A2463;
+            --primary-light: #3A4C99;
+            --secondary: #E71D36;
+            --secondary-light: #FF4D6A;
+            --success: #2EC4B6;
+            --warning: #FF9F1C;
+            --dark: #0F172A;
+            --light: #F8FAFC;
+            --glass-bg: rgba(255, 255, 255, 0.92);
+            --glass-border: rgba(255, 255, 255, 0.25);
+            --shadow-sm: 0 4px 20px rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 10px 40px rgba(0, 0, 0, 0.08);
+            --shadow-lg: 0 25px 80px rgba(0, 0, 0, 0.12);
+        }
+        
+        /* ===== 全局样式 ===== */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', 'Noto Sans SC', sans-serif;
+            background: linear-gradient(135deg, #f6f9ff 0%, #f0f4ff 100%);
+            min-height: 100vh;
+            margin: 0;
+            overflow-x: hidden;
+        }
+        
+        /* ===== 玻璃态效果 ===== */
+        .glass-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            box-shadow: var(--shadow-lg);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .glass-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 30px 90px rgba(10, 36, 99, 0.15);
+        }
+        
+        .glass-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.6), transparent);
+        }
+        
+        /* ===== 渐变背景 ===== */
+        .gradient-bg {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .gradient-bg::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px);
+            background-size: 40px 40px;
+            animation: float 30s linear infinite;
+        }
+        
+        /* ===== 高级按钮 ===== */
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            color: white;
+            border: none;
+            border-radius: 14px;
+            padding: 16px 32px;
+            font-weight: 600;
+            font-size: 16px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(10, 36, 99, 0.2);
+        }
+        
+        .btn-primary::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.7s ease;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 20px 50px rgba(10, 36, 99, 0.3);
+        }
+        
+        .btn-primary:hover::before {
+            left: 100%;
+        }
+        
+        /* ===== 动画效果 ===== */
+        @keyframes float {
+            0% { transform: translate(0, 0) rotate(0deg); }
+            100% { transform: translate(-40px, -40px) rotate(360deg); }
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(40px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes shimmer {
+            0% { background-position: -1000px 0; }
+            100% { background-position: 1000px 0; }
+        }
+        
+        .animate-fade-in-up {
+            animation: fadeInUp 0.8s ease-out;
+        }
+        
+        .animate-delay-100 { animation-delay: 0.1s; }
+        .animate-delay-200 { animation-delay: 0.2s; }
+        .animate-delay-300 { animation-delay: 0.3s; }
+        
+        /* ===== 卡片悬停效果 ===== */
+        .hover-card {
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+        }
+        
+        .hover-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: var(--shadow-lg);
+        }
+        
+        /* ===== 高级表格 ===== */
+        .table-modern {
+            border-collapse: separate;
+            border-spacing: 0;
+            width: 100%;
+        }
+        
+        .table-modern thead th {
+            background: linear-gradient(to bottom, rgba(248, 250, 252, 0.9), rgba(255, 255, 255, 0.9));
+            padding: 20px 24px;
+            font-weight: 600;
+            color: var(--dark);
+            border-bottom: 2px solid rgba(226, 232, 240, 0.6);
+            position: sticky;
+            top: 0;
+            backdrop-filter: blur(10px);
+            font-size: 15px;
+        }
+        
+        .table-modern tbody tr {
+            transition: all 0.3s ease;
+            border-bottom: 1px solid rgba(226, 232, 240, 0.4);
+        }
+        
+        .table-modern tbody tr:hover {
+            background: linear-gradient(to right, rgba(10, 36, 99, 0.04), rgba(231, 29, 54, 0.04));
+            transform: translateX(8px);
+        }
+        
+        .table-modern tbody td {
+            padding: 20px 24px;
+            vertical-align: middle;
+        }
+        
+        /* ===== 徽章样式 ===== */
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 8px 16px;
+            border-radius: 100px;
+            font-size: 13px;
+            font-weight: 600;
+            line-height: 1;
+        }
+        
+        .badge-success {
+            background: linear-gradient(135deg, var(--success), #34D399);
+            color: white;
+            box-shadow: 0 4px 15px rgba(46, 196, 182, 0.3);
+        }
+        
+        .badge-warning {
+            background: linear-gradient(135deg, var(--warning), #FBBF24);
+            color: white;
+            box-shadow: 0 4px 15px rgba(255, 159, 28, 0.3);
+        }
+        
+        .badge-primary {
+            background: linear-gradient(135deg, var(--primary-light), var(--primary));
+            color: white;
+            box-shadow: 0 4px 15px rgba(10, 36, 99, 0.3);
+        }
+        
+        /* ===== 加载动画 ===== */
+        .loading-shimmer {
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 1200px 100%;
+            animation: shimmer 1.5s infinite linear;
+            border-radius: 12px;
+        }
+        
+        /* ===== 滚动条美化 ===== */
+        .scrollbar-thin::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        
+        .scrollbar-thin::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.05);
+            border-radius: 10px;
+        }
+        
+        .scrollbar-thin::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, var(--primary-light), var(--primary));
+            border-radius: 10px;
+        }
+        
+        .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+        }
+        
+        /* ===== 火焰特效装饰 ===== */
+        .fire-effect {
+            position: relative;
+        }
+        
+        .fire-effect::after {
+            content: '';
+            position: absolute;
+            bottom: -6px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 70%;
+            height: 4px;
+            background: linear-gradient(90deg, transparent, var(--secondary), transparent);
+            border-radius: 100%;
+            filter: blur(3px);
+            opacity: 0.7;
+        }
+        
+        /* ===== 响应式调整 ===== */
+        @media (max-width: 768px) {
+            .glass-card {
+                border-radius: 20px;
+                margin: 0 12px;
+            }
+            
+            .btn-primary {
+                padding: 14px 28px;
+                font-size: 15px;
+            }
+            
+            .table-modern thead th,
+            .table-modern tbody td {
+                padding: 16px 20px;
+            }
+        }
+        
+        /* ===== 输入框美化 ===== */
+        .input-modern {
+            background: rgba(255, 255, 255, 0.7);
+            border: 2px solid rgba(226, 232, 240, 0.8);
+            border-radius: 14px;
+            padding: 16px 20px;
+            font-size: 15px;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+        
+        .input-modern:focus {
+            background: white;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(10, 36, 99, 0.1);
+            outline: none;
+        }
+        
+        /* ===== 进度条 ===== */
+        .progress-bar {
+            height: 8px;
+            background: rgba(226, 232, 240, 0.6);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        
+        .progress-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            border-radius: 4px;
+            transition: width 0.6s ease;
+        }
+        
+        /* ===== 下拉菜单美化 ===== */
+        .dropdown-menu {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            box-shadow: var(--shadow-lg);
+            min-width: 200px;
+            overflow: hidden;
+        }
+        
+        /* ===== 通知样式 ===== */
+        .notification {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            box-shadow: var(--shadow-lg);
+            padding: 20px;
+            max-width: 400px;
+            border-left: 5px solid var(--success);
+            animation: slideInRight 0.5s ease-out;
+        }
+        
+        @keyframes slideInRight {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        
+        /* ===== 统计卡片 ===== */
+        .stat-card {
+            padding: 28px;
+            border-radius: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 100px;
+            height: 100px;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px);
+            background-size: 20px 20px;
+            opacity: 0.5;
+        }
+        
+        /* ===== 标签页样式 ===== */
+        .tab-button {
+            padding: 14px 28px;
+            border-radius: 12px;
+            font-weight: 600;
+            color: #64748b;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .tab-button.active {
+            color: var(--primary);
+            background: rgba(10, 36, 99, 0.08);
+        }
+        
+        .tab-button.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 40%;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            border-radius: 2px;
+        }
+        
+        /* ===== 骨架屏 ===== */
+        .skeleton {
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite linear;
+        }
+        
+        /* ===== 模态框 ===== */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(10px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            animation: fadeIn 0.3s ease-out;
+        }
+        
+        .modal-content {
+            background: var(--glass-bg);
+            backdrop-filter: blur(30px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            max-width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            animation: slideUp 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes slideUp {
+            from {
+                transform: translateY(40px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+    </style>
+    
+    <!-- Tailwind配置 -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#0A2463',
+                        secondary: '#E71D36',
+                        success: '#2EC4B6',
+                        warning: '#FF9F1C',
+                        fireblue: '#1E3A8A',
+                        firedark: '#0F172A'
+                    },
+                    animation: {
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'bounce-slow': 'bounce 2s infinite',
+                        'spin-slow': 'spin 3s linear infinite'
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+
+<body class="scrollbar-thin">
+    <!-- 登录页面 -->
+    <div id="login-page" class="min-h-screen flex items-center justify-center p-6 animate-fade-in-up">
+        <!-- 背景装饰 -->
+        <div class="absolute inset-0 overflow-hidden">
+            <div class="absolute -top-40 -right-40 w-80 h-80 bg-primary/10 rounded-full blur-3xl"></div>
+            <div class="absolute -bottom-40 -left-40 w-80 h-80 bg-secondary/10 rounded-full blur-3xl"></div>
+            <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full h-full">
+                <div class="absolute top-1/4 left-1/4 w-4 h-4 bg-primary/20 rounded-full"></div>
+                <div class="absolute top-1/3 right-1/3 w-6 h-6 bg-secondary/20 rounded-full"></div>
+                <div class="absolute bottom-1/4 right-1/4 w-8 h-8 bg-primary/20 rounded-full"></div>
+            </div>
+        </div>
+        
+        <!-- 登录卡片 -->
+        <div class="relative z-10 w-full max-w-2xl">
+            <div class="glass-card rounded-3xl p-10">
+                <!-- Logo区域 -->
+                <div class="text-center mb-12 animate-fade-in-up">
+                    <div class="relative h-32 w-32 rounded-full gradient-bg flex items-center justify-center mx-auto mb-8">
+                        <i class="fa fa-fire text-white text-5xl relative z-10"></i>
+                        <div class="absolute inset-0 bg-white/20 rounded-full animate-pulse"></div>
+                        <div class="absolute -inset-4 bg-gradient-to-r from-primary/30 to-secondary/30 rounded-full blur-xl"></div>
+                    </div>
+                    <h1 class="text-5xl font-bold bg-gradient-to-r from-primary via-primary to-secondary bg-clip-text text-transparent mb-3">
+                        阳东消防考核系统
+                    </h1>
+                    <p class="text-gray-600 text-lg tracking-wide">智能考核 · 精准管理 · 数据驱动</p>
+                </div>
+                
+                <!-- 角色选择 -->
+                <div class="mb-10 animate-fade-in-up animate-delay-100">
+                    <label class="block text-sm font-semibold text-gray-700 mb-5 text-lg">选择登录身份</label>
+                    <div class="grid grid-cols-3 gap-5">
+                        <button type="button" data-role="firefighter" 
+                            class="role-btn group relative glass-card p-6 rounded-2xl border-2 border-gray-200/50 hover:border-primary transition-all duration-300 hover-card">
+                            <div class="h-14 w-14 rounded-full bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
+                                <i class="fa fa-user text-primary text-2xl"></i>
+                            </div>
+                            <span class="text-base font-semibold text-gray-800 group-hover:text-primary transition-colors">消防员</span>
+                            <div class="absolute -top-3 -right-3 h-8 w-8 rounded-full bg-gradient-to-br from-success to-emerald-400 text-white text-sm flex items-center justify-center shadow-lg transform scale-0 group-hover:scale-100 transition-transform">
+                                <i class="fa fa-check"></i>
+                            </div>
+                        </button>
+                        
+                        <button type="button" data-role="manager" 
+                            class="role-btn group relative glass-card p-6 rounded-2xl border-2 border-gray-200/50 hover:border-primary transition-all duration-300 hover-card">
+                            <div class="h-14 w-14 rounded-full bg-gradient-to-br from-secondary/20 to-secondary/10 flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
+                                <i class="fa fa-user-tie text-secondary text-2xl"></i>
+                            </div>
+                            <span class="text-base font-semibold text-gray-800 group-hover:text-secondary transition-colors">管理员</span>
+                            <div class="absolute -top-3 -right-3 h-8 w-8 rounded-full bg-gradient-to-br from-success to-emerald-400 text-white text-sm flex items-center justify-center shadow-lg transform scale-0 group-hover:scale-100 transition-transform">
+                                <i class="fa fa-check"></i>
+                            </div>
+                        </button>
+                        
+                        <button type="button" data-role="admin" 
+                            class="role-btn group relative glass-card p-6 rounded-2xl border-2 border-gray-200/50 hover:border-primary transition-all duration-300 hover-card">
+                            <div class="h-14 w-14 rounded-full bg-gradient-to-br from-warning/20 to-warning/10 flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
+                                <i class="fa fa-user-shield text-warning text-2xl"></i>
+                            </div>
+                            <span class="text-base font-semibold text-gray-800 group-hover:text-warning transition-colors">超级管理员</span>
+                            <div class="absolute -top-3 -right-3 h-8 w-8 rounded-full bg-gradient-to-br from-success to-emerald-400 text-white text-sm flex items-center justify-center shadow-lg transform scale-0 group-hover:scale-100 transition-transform">
+                                <i class="fa fa-check"></i>
+                            </div>
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- 登录表单 -->
+                <form id="login-form" class="space-y-8">
+                    <div class="animate-fade-in-up animate-delay-200">
+                        <label for="username" class="block text-sm font-semibold text-gray-700 mb-4 flex items-center text-lg">
+                            <i class="fa fa-id-card text-primary mr-3 text-xl"></i>账号
+                        </label>
+                        <div class="relative">
+                            <input type="text" id="username" 
+                                class="input-modern w-full pl-14 pr-4 py-5 text-lg" 
+                                placeholder="请输入账号">
+                            <div class="absolute left-5 top-1/2 transform -translate-y-1/2 text-gray-400 text-xl">
+                                <i class="fa fa-user-circle"></i>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="animate-fade-in-up animate-delay-300">
+                        <label for="password" class="block text-sm font-semibold text-gray-700 mb-4 flex items-center text-lg">
+                            <i class="fa fa-key text-primary mr-3 text-xl"></i>密码
+                        </label>
+                        <div class="relative">
+                            <input type="password" id="password" 
+                                class="input-modern w-full pl-14 pr-4 py-5 text-lg" 
+                                placeholder="请输入密码">
+                            <div class="absolute left-5 top-1/2 transform -translate-y-1/2 text-gray-400 text-xl">
+                                <i class="fa fa-lock"></i>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-center justify-between animate-fade-in-up animate-delay-400">
+                        <label class="flex items-center cursor-pointer group">
+                            <div class="relative">
+                                <input type="checkbox" id="remember-me" class="sr-only">
+                                <div class="h-6 w-6 rounded-xl border-2 border-gray-300 flex items-center justify-center transition-all duration-300 group-hover:border-primary">
+                                    <i class="fa fa-check text-white text-xs opacity-0 transition-opacity"></i>
+                                </div>
+                            </div>
+                            <span class="ml-3 text-gray-600 group-hover:text-gray-800 transition-colors">记住账号密码</span>
+                        </label>
+                        
+                        <a href="#" class="text-base font-medium text-primary hover:text-primary/80 transition-colors hover:underline">
+                            忘记密码？<i class="fa fa-question-circle ml-1"></i>
+                        </a>
+                    </div>
+                    
+                    <button type="submit" 
+                        class="w-full btn-primary py-5 rounded-2xl font-semibold text-lg animate-fade-in-up animate-delay-500 mt-8">
+                        <i class="fa fa-sign-in mr-3 text-xl"></i>登录系统
+                    </button>
+                </form>
+                
+                <!-- 特色功能展示 -->
+                <div class="mt-14 pt-10 border-t border-gray-200/50">
+                    <div class="grid grid-cols-3 gap-8 text-center">
+                        <div class="space-y-3">
+                            <div class="h-12 w-12 rounded-2xl bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center mx-auto">
+                                <i class="fa fa-shield-alt text-primary text-xl"></i>
+                            </div>
+                            <p class="text-sm font-medium text-gray-700">军用级加密</p>
+                        </div>
+                        <div class="space-y-3">
+                            <div class="h-12 w-12 rounded-2xl bg-gradient-to-br from-success/20 to-success/10 flex items-center justify-center mx-auto">
+                                <i class="fa fa-chart-line text-success text-xl"></i>
+                            </div>
+                            <p class="text-sm font-medium text-gray-700">智能分析</p>
+                        </div>
+                        <div class="space-y-3">
+                            <div class="h-12 w-12 rounded-2xl bg-gradient-to-br from-warning/20 to-warning/10 flex items-center justify-center mx-auto">
+                                <i class="fa fa-mobile-alt text-warning text-xl"></i>
+                            </div>
+                            <p class="text-sm font-medium text-gray-700">移动优化</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 版本信息 -->
+            <div class="text-center mt-8 text-gray-500">
+                <p>© 2024 阳东消防救援大队 · <span class="font-semibold">V3.0 高级版</span></p>
+                <p class="text-sm mt-2 opacity-75">技术支持：消防信息化中心</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- 主应用界面 -->
+    <div id="app-container" class="hidden min-h-screen bg-gradient-to-br from-gray-50 to-blue-50">
+        <!-- 移动端顶部栏 -->
+        <div class="md:hidden fixed top-0 left-0 right-0 glass-card z-50 border-b border-white/20">
+            <div class="flex items-center justify-between px-5 py-4">
+                <div class="flex items-center">
+                    <button id="mobile-menu-btn" class="mr-4 text-gray-700 hover:text-primary transition-colors">
+                        <i class="fa fa-bars text-2xl"></i>
+                    </button>
+                    <div class="h-10 w-10 rounded-full gradient-bg flex items-center justify-center mr-3">
+                        <i class="fa fa-fire text-white"></i>
+                    </div>
+                    <h1 class="text-xl font-bold text-gray-800 truncate" id="mobile-page-title">首页</h1>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <button id="mobile-notification" class="relative text-gray-700 hover:text-primary transition-colors">
+                        <i class="fa fa-bell text-xl"></i>
+                        <span class="absolute -top-1 -right-1 h-3 w-3 bg-gradient-to-br from-secondary to-secondary-light rounded-full border-2 border-white"></span>
+                    </button>
+                    <button id="mobile-profile-btn">
+                        <div class="h-10 w-10 rounded-full gradient-bg flex items-center justify-center">
+                            <i class="fa fa-user text-white"></i>
+                        </div>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 移动端侧边栏 -->
+        <div id="mobile-sidebar" class="md:hidden fixed inset-0 bg-black/50 z-50 transform -translate-x-full transition-transform duration-500 backdrop-blur-sm">
+            <div class="w-80 bg-white/95 backdrop-blur-xl h-full overflow-y-auto shadow-2xl animate-slide-in-right">
+                <!-- 侧边栏头部 -->
+                <div class="gradient-bg p-6">
+                    <div class="flex items-center justify-between mb-8">
+                        <div class="flex items-center">
+                            <div class="h-12 w-12 rounded-full bg-white/20 flex items-center justify-center mr-4">
+                                <i class="fa fa-fire text-white text-xl"></i>
+                            </div>
+                            <h2 class="text-xl font-bold text-white">阳东消防</h2>
+                        </div>
+                        <button id="close-mobile-menu" class="text-white hover:text-gray-200 transition-colors">
+                            <i class="fa fa-times text-xl"></i>
+                        </button>
+                    </div>
+                    <div class="flex items-center p-4 bg-white/20 rounded-2xl backdrop-blur-sm">
+                        <div class="h-12 w-12 rounded-full gradient-bg flex items-center justify-center mr-4">
+                            <i class="fa fa-user text-white"></i>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <p class="text-sm font-semibold text-white truncate" id="mobile-user-name">消防员</p>
+                            <p class="text-xs text-white/80 truncate mt-1" id="mobile-user-role">消防员</p>
+                        </div>
+                        <i class="fa fa-chevron-right text-white/60"></i>
+                    </div>
+                </div>
+                
+                <!-- 侧边栏导航 -->
+                <nav class="p-4 space-y-1" id="mobile-nav-menu">
+                    <!-- 动态生成 -->
+                </nav>
+                
+                <!-- 侧边栏底部 -->
+                <div class="mt-auto p-6 border-t border-gray-200/50">
+                    <button onclick="logout()" 
+                        class="w-full flex items-center justify-center px-6 py-3 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-xl hover:shadow-lg transition-all duration-300">
+                        <i class="fa fa-sign-out mr-3"></i>
+                        <span class="font-semibold">退出登录</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 桌面端布局 -->
+        <div class="hidden md:flex h-screen">
+            <!-- 左侧边栏 -->
+            <aside class="w-72 glass-card flex flex-col border-r border-white/20">
+                <!-- Logo -->
+                <div class="p-8 border-b border-white/20">
+                    <div class="flex items-center">
+                        <div class="h-14 w-14 rounded-2xl gradient-bg flex items-center justify-center mr-4">
+                            <i class="fa fa-fire text-white text-xl"></i>
+                        </div>
+                        <div>
+                            <h1 class="text-2xl font-bold text-gray-800">阳东消防</h1>
+                            <p class="text-sm text-gray-500 mt-1">智能考核系统</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 用户信息 -->
+                <div class="p-6 border-b border-white/20">
+                    <div class="flex items-center">
+                        <div class="h-16 w-16 rounded-2xl gradient-bg flex items-center justify-center mr-4">
+                            <i class="fa fa-user text-white text-2xl"></i>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <p class="text-lg font-semibold text-gray-800 truncate" id="desktop-user-name">消防员</p>
+                            <p class="text-sm text-gray-500 truncate mt-1" id="desktop-user-role">消防员</p>
+                            <p class="text-xs text-gray-400 truncate mt-1" id="desktop-user-dept">阳东大队</p>
+                        </div>
+                        <button class="text-gray-400 hover:text-gray-600 transition-colors">
+                            <i class="fa fa-chevron-down"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- 导航菜单 -->
+                <nav class="flex-1 overflow-y-auto p-6 space-y-1" id="desktop-nav-menu">
+                    <!-- 动态生成 -->
+                </nav>
+                
+                <!-- 系统状态 -->
+                <div class="p-6 border-t border-white/20">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center text-green-600 font-medium">
+                            <div class="h-3 w-3 rounded-full bg-green-500 mr-3 animate-pulse"></div>
+                            <span>系统在线</span>
+                        </div>
+                        <span class="text-xs text-gray-400 font-medium" id="last-sync">刚刚同步</span>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- 主内容区 -->
+            <main class="flex-1 overflow-hidden flex flex-col">
+                <!-- 顶部导航栏 -->
+                <header class="glass-card border-b border-white/20">
+                    <div class="px-8 py-5">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center space-x-6">
+                                <!-- 返回按钮 -->
+                                <div id="back-button-container" class="hidden">
+                                    <button onclick="goBack()" 
+                                        class="flex items-center text-gray-600 hover:text-primary transition-colors px-4 py-2 rounded-xl hover:bg-gray-100/50">
+                                        <i class="fa fa-arrow-left mr-3"></i>
+                                        <span class="font-medium">返回</span>
+                                    </button>
+                                </div>
+                                
+                                <h1 class="text-2xl font-bold text-gray-800" id="page-title">仪表盘</h1>
+                                
+                                <div class="hidden lg:flex items-center space-x-3">
+                                    <span class="px-4 py-2 bg-gradient-to-r from-primary/10 to-primary/5 text-primary rounded-xl font-medium">
+                                        <i class="fa fa-shield mr-2"></i>内部系统
+                                    </span>
+                                    <span class="px-4 py-2 bg-gradient-to-r from-green-100 to-emerald-100 text-green-800 rounded-xl font-medium" id="network-indicator">
+                                        <i class="fa fa-wifi mr-2"></i>在线状态
+                                    </span>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-center space-x-6">
+                                <!-- 一键导出按钮 -->
+                                <div id="export-button-container" class="hidden">
+                                    <button onclick="exportRankings()" 
+                                        class="btn-primary px-6 py-3 rounded-xl font-medium">
+                                        <i class="fa fa-download mr-3"></i>导出排名
+                                    </button>
+                                </div>
+                                
+                                <!-- 通知 -->
+                                <button class="relative text-gray-700 hover:text-primary transition-colors group">
+                                    <i class="fa fa-bell text-2xl"></i>
+                                    <span class="absolute -top-2 -right-2 h-4 w-4 bg-gradient-to-br from-secondary to-secondary-light rounded-full border-2 border-white text-xs flex items-center justify-center text-white">
+                                        3
+                                    </span>
+                                    <div class="absolute top-full right-0 mt-3 w-80 dropdown-menu hidden group-hover:block">
+                                        <div class="p-4 border-b border-gray-200/50">
+                                            <h3 class="font-semibold text-gray-800">系统通知</h3>
+                                        </div>
+                                        <div class="max-h-80 overflow-y-auto">
+                                            <div class="p-4 hover:bg-gray-100/50 transition-colors border-b border-gray-200/50">
+                                                <p class="text-sm font-medium text-gray-800">新考核任务发布</p>
+                                                <p class="text-xs text-gray-500 mt-1">12月体能考核即将开始</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </button>
+                                
+                                <!-- 用户菜单 -->
+                                <div class="relative group">
+                                    <button class="flex items-center space-x-3">
+                                        <div class="h-12 w-12 rounded-2xl gradient-bg flex items-center justify-center">
+                                            <i class="fa fa-user text-white"></i>
+                                        </div>
+                                        <span class="text-base font-semibold text-gray-700 hidden lg:inline" id="header-user-name">消防员</span>
+                                        <i class="fa fa-chevron-down text-gray-400"></i>
+                                    </button>
+                                    
+                                    <!-- 下拉菜单 -->
+                                    <div class="absolute right-0 mt-3 w-56 dropdown-menu hidden group-hover:block">
+                                        <a href="#" class="flex items-center px-5 py-4 text-gray-700 hover:bg-gray-100/50 transition-colors">
+                                            <i class="fa fa-user text-primary mr-4"></i>
+                                            <span>个人资料</span>
+                                        </a>
+                                        <a href="#" class="flex items-center px-5 py-4 text-gray-700 hover:bg-gray-100/50 transition-colors">
+                                            <i class="fa fa-cog text-primary mr-4"></i>
+                                            <span>系统设置</span>
+                                        </a>
+                                        <div class="border-t border-gray-200/50 my-2"></div>
+                                        <button onclick="logout()" 
+                                            class="w-full text-left flex items-center px-5 py-4 text-red-600 hover:bg-red-50/50 transition-colors">
+                                            <i class="fa fa-sign-out mr-4"></i>
+                                            <span class="font-semibold">退出登录</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </header>
+
+                <!-- 内容区域 -->
+                <div class="flex-1 overflow-y-auto p-6 md:p-8" id="page-content">
+                    <!-- 动态加载内容 -->
+                </div>
+            </main>
+        </div>
+
+        <!-- 移动端底部导航 -->
+        <div class="md:hidden fixed bottom-0 left-0 right-0 glass-card border-t border-white/20 z-40">
+            <div class="flex justify-around py-4">
+                <button data-page="dashboard" 
+                    class="mobile-nav-btn flex flex-col items-center text-primary">
+                    <div class="h-12 w-12 rounded-2xl bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center mb-2">
+                        <i class="fa fa-home text-xl"></i>
+                    </div>
+                    <span class="text-xs font-semibold">首页</span>
+                </button>
+                <button data-page="my-scores" 
+                    class="mobile-nav-btn flex flex-col items-center text-gray-500">
+                    <div class="h-12 w-12 rounded-2xl bg-gray-100 flex items-center justify-center mb-2">
+                        <i class="fa fa-chart-line text-xl"></i>
+                    </div>
+                    <span class="text-xs font-semibold">成绩</span>
+                </button>
+                <button data-page="rankings" 
+                    class="mobile-nav-btn flex flex-col items-center text-gray-500">
+                    <div class="h-12 w-12 rounded-2xl bg-gray-100 flex items-center justify-center mb-2">
+                        <i class="fa fa-trophy text-xl"></i>
+                    </div>
+                    <span class="text-xs font-semibold">排名</span>
+                </button>
+                <button data-page="profile" 
+                    class="mobile-nav-btn flex flex-col items-center text-gray-500">
+                    <div class="h-12 w-12 rounded-2xl bg-gray-100 flex items-center justify-center mb-2">
+                        <i class="fa fa-user text-xl"></i>
+                    </div>
+                    <span class="text-xs font-semibold">我的</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 通知组件 -->
+    <div id="notification" class="fixed top-6 right-6 z-50 transform translate-x-full transition-transform duration-500">
+        <div class="notification">
+            <div class="flex items-start">
+                <div class="flex-shrink-0 text-success text-2xl mr-4">
+                    <i class="fa fa-check-circle"></i>
+                </div>
+                <div class="flex-1">
+                    <p class="text-lg font-semibold text-gray-900" id="notification-title"></p>
+                    <p class="mt-2 text-gray-600" id="notification-message"></p>
+                </div>
+                <button class="close-notification ml-4 flex-shrink-0 text-gray-400 hover:text-gray-600 transition-colors">
+                    <i class="fa fa-times"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 加载遮罩 -->
+    <div id="loading-overlay" class="fixed inset-0 bg-black/60 flex items-center justify-center z-50 hidden backdrop-blur-sm">
+        <div class="glass-card p-8 rounded-3xl">
+            <div class="flex items-center">
+                <div class="h-12 w-12 rounded-full border-4 border-primary border-t-transparent animate-spin mr-6"></div>
+                <div>
+                    <p class="text-xl font-semibold text-gray-800">加载中</p>
+                    <p class="text-gray-500 mt-1" id="loading-message">请稍候...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 骨架屏模板 -->
+    <template id="skeleton-template">
+        <div class="space-y-8 p-6">
+            <div class="h-10 w-64 skeleton rounded-xl"></div>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div class="h-36 skeleton rounded-2xl"></div>
+                <div class="h-36 skeleton rounded-2xl"></div>
+                <div class="h-36 skeleton rounded-2xl"></div>
+                <div class="h-36 skeleton rounded-2xl"></div>
+            </div>
+            <div class="h-80 skeleton rounded-2xl"></div>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div class="h-96 skeleton rounded-2xl"></div>
+                <div class="h-96 skeleton rounded-2xl"></div>
+            </div>
+        </div>
+    </template>
+
+<script>
+        // ==================== 全局配置 ====================
+        const APP_CONFIG = {
+            appName: '阳东消防考核管理系统',
+            version: '3.0.0',
+            defaultUsers: {
+                admin: { 
+                    username: 'admin', 
+                    password: 'admin123', 
+                    name: '系统管理员', 
+                    role: 'admin',
+                    avatar: 'fa-user-shield'
+                },
+                manager: { 
+                    username: 'manager', 
+                    password: 'manager123', 
+                    name: '部门管理员', 
+                    role: 'manager',
+                    avatar: 'fa-user-tie'
+                },
+                firefighter: { 
+                    username: 'FD001', 
+                    password: '123456', 
+                    name: '郑金秀', 
+                    role: 'firefighter',
+                    avatar: 'fa-user',
+                    department: '阳东大队'
+                }
+            },
+            departments: [
+                { name: '阳东大队', color: 'from-primary to-primary-light' },
+                { name: '特勤一中队', color: 'from-secondary to-secondary-light' },
+                { name: '特勤二中队', color: 'from-success to-emerald-400' },
+                { name: '战勤保障大队', color: 'from-warning to-amber-400' },
+                { name: '消防训练基地', color: 'from-purple-500 to-purple-400' }
+            ],
+            assessmentItems: [
+                { 
+                    id: 'ITEM_001', 
+                    name: '3000米跑', 
+                    type: '体能', 
+                    unit: '分:秒', 
+                    maxScore: 100, 
+                    active: true,
+                    icon: 'fa-running'
+                },
+                { 
+                    id: 'ITEM_002', 
+                    name: '100米负重跑', 
+                    type: '体能', 
+                    unit: '秒', 
+                    maxScore: 100, 
+                    active: true,
+                    icon: 'fa-weight-hanging'
+                },
+                { 
+                    id: 'ITEM_003', 
+                    name: '单杠引体向上', 
+                    type: '体能', 
+                    unit: '次', 
+                    maxScore: 100, 
+                    active: true,
+                    icon: 'fa-dumbbell'
+                },
+                { 
+                    id: 'ITEM_004', 
+                    name: '双杠臂屈伸', 
+                    type: '体能', 
+                    unit: '次', 
+                    maxScore: 100, 
+                    active: true,
+                    icon: 'fa-hands'
+                },
+                { 
+                    id: 'ITEM_005', 
+                    name: '水带铺设', 
+                    type: '技能', 
+                    unit: '秒', 
+                    maxScore: 100, 
+                    active: true,
+                    icon: 'fa-faucet'
+                },
+                { 
+                    id: 'ITEM_006', 
+                    name: '灭火器操作', 
+                    type: '技能', 
+                    unit: '分', 
+                    maxScore: 100, 
+                    active: true,
+                    icon: 'fa-fire-extinguisher'
+                },
+                { 
+                    id: 'ITEM_007', 
+                    name: '理论知识', 
+                    type: '理论', 
+                    unit: '分', 
+                    maxScore: 100, 
+                    active: true,
+                    icon: 'fa-book'
+                }
+            ]
+        };
+
+        // 当前状态
+        let currentUser = null;
+        let currentPage = 'dashboard';
+        let pageHistory = [];
+        let currentPageData = null;
+
+        // ==================== 初始化函数 ====================
+        document.addEventListener('DOMContentLoaded', function() {
+            initEventListeners();
+            checkRememberedLogin();
+            monitorNetwork();
+            document.getElementById('login-page').classList.remove('hidden');
+            initMockData();
+            updateDateTime();
+            setInterval(updateDateTime, 60000); // 每分钟更新时间
+        });
+
+        // ==================== 事件监听器 ====================
+        function initEventListeners() {
+            // 登录表单
+            document.getElementById('login-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                handleLogin();
+            });
+            
+            // 角色选择
+            document.querySelectorAll('.role-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    selectRole(this.dataset.role);
+                });
+            });
+            
+            // 移动端菜单
+            document.getElementById('mobile-menu-btn').addEventListener('click', function() {
+                document.getElementById('mobile-sidebar').classList.remove('-translate-x-full');
+            });
+            
+            document.getElementById('close-mobile-menu').addEventListener('click', function() {
+                document.getElementById('mobile-sidebar').classList.add('-translate-x-full');
+            });
+            
+            // 移动端导航
+            document.querySelectorAll('.mobile-nav-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const page = this.dataset.page;
+                    navigateTo(page);
+                    updateMobileNav(this);
+                });
+            });
+            
+            // 通知关闭
+            document.querySelector('.close-notification')?.addEventListener('click', hideNotification);
+            
+            // 全局点击
+            document.addEventListener('click', function(e) {
+                if (e.target.matches('[data-page]') || e.target.closest('[data-page]')) {
+                    const page = e.target.dataset.page || e.target.closest('[data-page]').dataset.page;
+                    navigateTo(page);
+                    document.getElementById('mobile-sidebar').classList.add('-translate-x-full');
+                }
+            });
+            
+            // 记住我复选框
+            document.getElementById('remember-me').addEventListener('change', function(e) {
+                const checkIcon = this.parentElement.querySelector('.fa-check');
+                if (this.checked) {
+                    checkIcon.classList.remove('opacity-0');
+                } else {
+                    checkIcon.classList.add('opacity-0');
+                }
+            });
+        }
+
+        function updateMobileNav(activeBtn) {
+            document.querySelectorAll('.mobile-nav-btn').forEach(btn => {
+                const iconDiv = btn.querySelector('div');
+                btn.classList.remove('text-primary');
+                btn.classList.add('text-gray-500');
+                iconDiv.classList.remove('from-primary/20', 'to-primary/10');
+                iconDiv.classList.add('bg-gray-100');
+            });
+            
+            activeBtn.classList.remove('text-gray-500');
+            activeBtn.classList.add('text-primary');
+            const activeIconDiv = activeBtn.querySelector('div');
+            activeIconDiv.classList.remove('bg-gray-100');
+            activeIconDiv.classList.add('bg-gradient-to-br', 'from-primary/20', 'to-primary/10');
+        }
+
+        // ==================== 登录函数 ====================
+        function selectRole(role) {
+            document.querySelectorAll('.role-btn').forEach(btn => {
+                btn.classList.remove('border-primary', 'border-secondary', 'border-warning');
+                btn.classList.add('border-gray-200/50');
+            });
+            
+            const selectedBtn = document.querySelector(`[data-role="${role}"]`);
+            let borderColor = 'border-primary';
+            if (role === 'manager') borderColor = 'border-secondary';
+            if (role === 'admin') borderColor = 'border-warning';
+            
+            selectedBtn.classList.remove('border-gray-200/50');
+            selectedBtn.classList.add(borderColor);
+            
+            const usernameInput = document.getElementById('username');
+            switch(role) {
+                case 'firefighter':
+                    usernameInput.value = 'FD001';
+                    usernameInput.placeholder = '请输入消防员编号';
+                    break;
+                case 'manager':
+                    usernameInput.value = 'manager';
+                    usernameInput.placeholder = '请输入管理员账号';
+                    break;
+                case 'admin':
+                    usernameInput.value = 'admin';
+                    usernameInput.placeholder = '请输入超级管理员账号';
+                    break;
+            }
+        }
+
+        async function handleLogin() {
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value;
+            const rememberMe = document.getElementById('remember-me').checked;
+            const selectedRole = document.querySelector('.role-btn.active')?.dataset.role;
+            
+            if (!username || !password) {
+                showNotification('登录失败', '请输入账号和密码', 'error');
+                return;
+            }
+            
+            if (!selectedRole) {
+                showNotification('登录失败', '请选择登录身份', 'error');
+                return;
+            }
+            
+            showLoading('正在验证身份...');
+            
+            try {
+                await new Promise(resolve => setTimeout(resolve, 800));
+                
+                let user = null;
+                
+                // 管理员验证
+                if (selectedRole === 'admin' || selectedRole === 'manager') {
+                    const defaultUser = APP_CONFIG.defaultUsers[selectedRole];
+                    if (defaultUser && username === defaultUser.username && password === defaultUser.password) {
+                        user = { ...defaultUser };
+                    }
+                }
+                // 消防员验证
+                else if (selectedRole === 'firefighter') {
+                    const firefighters = JSON.parse(localStorage.getItem('firefighters') || '[]');
+                    const firefighter = firefighters.find(f => f.id === username && f.idCard?.slice(-6) === password);
+                    
+                    if (firefighter) {
+                        user = {
+                            username: firefighter.id,
+                            password: firefighter.idCard.slice(-6),
+                            name: firefighter.name,
+                            role: 'firefighter',
+                            department: firefighter.department,
+                            avatar: 'fa-user'
+                        };
+                    }
+                    
+                    // 演示账号
+                    const demoFirefighter = APP_CONFIG.defaultUsers.firefighter;
+                    if (!user && demoFirefighter && username === demoFirefighter.username && password === demoFirefighter.password) {
+                        user = { ...demoFirefighter };
+                    }
+                }
+                
+                if (user) {
+                    // 记住登录
+                    if (rememberMe) {
+                        localStorage.setItem('remembered_login', JSON.stringify({
+                            username: user.username,
+                            password: user.password,
+                            role: user.role,
+                            timestamp: Date.now()
+                        }));
+                    }
+                    
+                    currentUser = user;
+                    updateUserUI();
+                    navigateTo('dashboard');
+                    
+                    document.getElementById('login-page').classList.add('hidden');
+                    document.getElementById('app-container').classList.remove('hidden');
+                    
+                    showNotification('登录成功', `欢迎回来，${user.name}！`);
+                } else {
+                    showNotification('登录失败', '账号或密码错误，请重试', 'error');
+                }
+            } catch (error) {
+                showNotification('登录失败', '网络错误，请检查连接', 'error');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        function checkRememberedLogin() {
+            const remembered = localStorage.getItem('remembered_login');
+            if (remembered) {
+                try {
+                    const loginData = JSON.parse(remembered);
+                    document.getElementById('username').value = loginData.username || '';
+                    document.getElementById('password').value = loginData.password || '';
+                    document.getElementById('remember-me').checked = true;
+                    
+                    // 触发复选框样式更新
+                    document.getElementById('remember-me').dispatchEvent(new Event('change'));
+                    
+                    if (loginData.username.startsWith('FD')) {
+                        selectRole('firefighter');
+                    } else if (loginData.username.includes('admin')) {
+                        selectRole('admin');
+                    } else {
+                        selectRole('manager');
+                    }
+                } catch (error) {
+                    localStorage.removeItem('remembered_login');
+                }
+            }
+        }
+
+        // ==================== 页面导航 ====================
+        function navigateTo(page, data = null) {
+            if (currentPage && currentPage !== page) {
+                pageHistory.push({
+                    page: currentPage,
+                    data: currentPageData
+                });
+            }
+            
+            currentPage = page;
+            currentPageData = data;
+            
+            updatePageTitle(page);
+            updateBackButton();
+            updateExportButton(page);
+            loadPage(page, data);
+            
+            // 更新移动端导航
+            const mobileBtn = document.querySelector(`.mobile-nav-btn[data-page="${page}"]`);
+            if (mobileBtn) {
+                updateMobileNav(mobileBtn);
+            }
+        }
+
+        function goBack() {
+            if (pageHistory.length > 0) {
+                const previous = pageHistory.pop();
+                navigateTo(previous.page, previous.data);
+            }
+        }
+
+        function updatePageTitle(page) {
+            const titles = {
+                'dashboard': '仪表盘',
+                'my-scores': '我的成绩',
+                'rankings': '成绩排名',
+                'profile': '个人中心',
+                'personnel': '人员管理',
+                'assessments': '考核管理',
+                'data-board': '数据看板',
+                'settings': '系统设置',
+                'user-management': '用户管理'
+            };
+            
+            const title = titles[page] || '消防考核系统';
+            document.getElementById('page-title').textContent = title;
+            document.getElementById('mobile-page-title').textContent = title;
+        }
+
+        function updateBackButton() {
+            const container = document.getElementById('back-button-container');
+            container.classList.toggle('hidden', pageHistory.length === 0);
+        }
+
+        function updateExportButton(page) {
+            const container = document.getElementById('export-button-container');
+            container.classList.toggle('hidden', page !== 'rankings');
+        }
+
+        function updateUserUI() {
+            if (!currentUser) return;
+            
+            const user = currentUser;
+            
+            // 更新用户名
+            ['mobile', 'desktop', 'header'].forEach(type => {
+                const element = document.getElementById(`${type}-user-name`);
+                if (element) element.textContent = user.name;
+            });
+            
+            // 更新角色
+            ['mobile', 'desktop'].forEach(type => {
+                const element = document.getElementById(`${type}-user-role`);
+                if (element) element.textContent = getRoleName(user.role);
+            });
+            
+            // 更新部门
+            const deptElement = document.getElementById('desktop-user-dept');
+            if (deptElement) deptElement.textContent = user.department || '阳东大队';
+            
+            // 更新菜单
+            renderMenu(user.role);
+        }
+
+        function getRoleName(role) {
+            const roleNames = {
+                'admin': '超级管理员',
+                'manager': '管理员',
+                'firefighter': '消防员'
+            };
+            return roleNames[role] || '用户';
+        }
+
+        function renderMenu(role) {
+            const menuItems = {
+                admin: [
+                    { id: 'dashboard', name: '仪表盘', icon: 'fa-home', color: 'text-primary' },
+                    { id: 'personnel', name: '人员管理', icon: 'fa-users', color: 'text-blue-500' },
+                    { id: 'assessments', name: '考核管理', icon: 'fa-clipboard-check', color: 'text-green-500' },
+                    { id: 'rankings', name: '成绩排名', icon: 'fa-trophy', color: 'text-yellow-500' },
+                    { id: 'data-board', name: '数据看板', icon: 'fa-chart-pie', color: 'text-purple-500' },
+                    { id: 'user-management', name: '用户管理', icon: 'fa-user-cog', color: 'text-indigo-500' },
+                    { id: 'settings', name: '系统设置', icon: 'fa-cog', color: 'text-gray-500' }
+                ],
+                manager: [
+                    { id: 'dashboard', name: '仪表盘', icon: 'fa-home', color: 'text-primary' },
+                    { id: 'personnel', name: '人员管理', icon: 'fa-users', color: 'text-blue-500' },
+                    { id: 'assessments', name: '考核管理', icon: 'fa-clipboard-check', color: 'text-green-500' },
+                    { id: 'rankings', name: '成绩排名', icon: 'fa-trophy', color: 'text-yellow-500' },
+                    { id: 'data-board', name: '数据看板', icon: 'fa-chart-pie', color: 'text-purple-500' }
+                ],
+                firefighter: [
+                    { id: 'dashboard', name: '首页', icon: 'fa-home', color: 'text-primary' },
+                    { id: 'my-scores', name: '我的成绩', icon: 'fa-chart-line', color: 'text-green-500' },
+                    { id: 'rankings', name: '成绩排名', icon: 'fa-trophy', color: 'text-yellow-500' },
+                    { id: 'profile', name: '个人中心', icon: 'fa-user', color: 'text-blue-500' }
+                ]
+            };
+            
+            const items = menuItems[role] || menuItems.firefighter;
+            
+            // 桌面端菜单
+            const desktopMenu = document.getElementById('desktop-nav-menu');
+            if (desktopMenu) {
+                desktopMenu.innerHTML = items.map(item => `
+                    <a href="#" data-page="${item.id}" 
+                        class="menu-item flex items-center px-5 py-4 text-gray-700 hover:bg-gray-100/50 rounded-2xl mb-2 transition-all duration-300 hover:translate-x-2">
+                        <i class="fa ${item.icon} ${item.color} text-xl mr-4"></i>
+                        <span class="font-medium">${item.name}</span>
+                        <i class="fa fa-chevron-right ml-auto text-gray-300 text-sm"></i>
+                    </a>
+                `).join('');
+            }
+            
+            // 移动端菜单
+            const mobileMenu = document.getElementById('mobile-nav-menu');
+            if (mobileMenu) {
+                mobileMenu.innerHTML = items.map(item => `
+                    <a href="#" data-page="${item.id}" 
+                        class="flex items-center px-5 py-4 text-gray-700 hover:bg-gray-100/50 rounded-2xl mb-2 transition-colors">
+                        <i class="fa ${item.icon} ${item.color} text-xl mr-4"></i>
+                        <span class="font-medium">${item.name}</span>
+                    </a>
+                `).join('');
+            }
+        }
+
+// ==================== 页面加载函数 ====================
+        async function loadPage(page, data = null) {
+            const content = document.getElementById('page-content');
+            showSkeleton(content);
+            
+            let html = '';
+            try {
+                switch(page) {
+                    case 'dashboard':
+                        html = await loadDashboard();
+                        break;
+                    case 'my-scores':
+                        html = await loadMyScores();
+                        break;
+                    case 'rankings':
+                        html = await loadRankings();
+                        break;
+                    case 'personnel':
+                        html = await loadPersonnelManagement();
+                        break;
+                    case 'assessments':
+                        html = await loadAssessmentManagement();
+                        break;
+                    case 'settings':
+                        html = await loadSystemSettings();
+                        break;
+                    default:
+                        html = await loadDashboard();
+                }
+                
+                content.innerHTML = html;
+                initPageComponents(page);
+            } catch (error) {
+                content.innerHTML = `
+                    <div class="flex flex-col items-center justify-center h-full p-8">
+                        <div class="h-24 w-24 rounded-full bg-red-100 flex items-center justify-center mb-6">
+                            <i class="fa fa-exclamation-triangle text-red-500 text-3xl"></i>
+                        </div>
+                        <h2 class="text-2xl font-bold text-gray-800 mb-2">加载失败</h2>
+                        <p class="text-gray-600 mb-6">页面加载时出现错误</p>
+                        <button onclick="navigateTo('dashboard')" 
+                            class="btn-primary px-6 py-3 rounded-xl">
+                            返回首页
+                        </button>
+                    </div>
+                `;
+            }
+            
+            setTimeout(() => hideSkeleton(content), 300);
+        }
+
+        async function loadDashboard() {
+            if (currentUser.role === 'firefighter') {
+                return loadFirefighterDashboard();
+            } else {
+                return loadAdminDashboard();
+            }
+        }
+
+        async function loadFirefighterDashboard() {
+            const scores = getMyScores();
+            const progress = getMyProgress();
+            
+            return `
+                <div class="space-y-8 animate-fade-in-up">
+                    <!-- 欢迎卡片 -->
+                    <div class="gradient-bg rounded-3xl p-8 text-white relative overflow-hidden">
+                        <div class="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2"></div>
+                        <div class="relative z-10">
+                            <div class="flex items-center justify-between mb-8">
+                                <div>
+                                    <h1 class="text-3xl font-bold mb-3">${currentUser.name}，欢迎回来！</h1>
+                                    <p class="opacity-90 text-lg">今日训练目标已完成 85%</p>
+                                </div>
+                                <div class="h-20 w-20 rounded-2xl bg-white/20 flex items-center justify-center backdrop-blur-sm">
+                                    <i class="fa fa-fire text-3xl text-white"></i>
+                                </div>
+                            </div>
+                            
+                            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                                <div class="stat-card bg-white/20 backdrop-blur-sm rounded-2xl p-6">
+                                    <p class="text-sm opacity-90 mb-2">本月考核</p>
+                                    <p class="text-3xl font-bold">3次</p>
+                                </div>
+                                <div class="stat-card bg-white/20 backdrop-blur-sm rounded-2xl p-6">
+                                    <p class="text-sm opacity-90 mb-2">平均分</p>
+                                    <p class="text-3xl font-bold">92分</p>
+                                </div>
+                                <div class="stat-card bg-white/20 backdrop-blur-sm rounded-2xl p-6">
+                                    <p class="text-sm opacity-90 mb-2">大队排名</p>
+                                    <p class="text-3xl font-bold">第8名</p>
+                                </div>
+                                <div class="stat-card bg-white/20 backdrop-blur-sm rounded-2xl p-6">
+                                    <p class="text-sm opacity-90 mb-2">进步</p>
+                                    <p class="text-3xl font-bold text-green-300">↑5%</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 快速入口 -->
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+                        <button onclick="navigateTo('my-scores')" 
+                            class="glass-card p-8 text-center hover-card">
+                            <div class="h-16 w-16 rounded-2xl bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center mx-auto mb-4">
+                                <i class="fa fa-chart-bar text-primary text-2xl"></i>
+                            </div>
+                            <h3 class="text-lg font-semibold text-gray-800 mb-2">我的成绩</h3>
+                            <p class="text-gray-500">查看详细成绩</p>
+                        </button>
+                        
+                        <button onclick="showProgressChart()" 
+                            class="glass-card p-8 text-center hover-card">
+                            <div class="h-16 w-16 rounded-2xl bg-gradient-to-br from-secondary/20 to-secondary/10 flex items-center justify-center mx-auto mb-4">
+                                <i class="fa fa-chart-line text-secondary text-2xl"></i>
+                            </div>
+                            <h3 class="text-lg font-semibold text-gray-800 mb-2">进步分析</h3>
+                            <p class="text-gray-500">查看进步趋势</p>
+                        </button>
+                        
+                        <button onclick="navigateTo('rankings')" 
+                            class="glass-card p-8 text-center hover-card">
+                            <div class="h-16 w-16 rounded-2xl bg-gradient-to-br from-success/20 to-success/10 flex items-center justify-center mx-auto mb-4">
+                                <i class="fa fa-trophy text-success text-2xl"></i>
+                            </div>
+                            <h3 class="text-lg font-semibold text-gray-800 mb-2">成绩排名</h3>
+                            <p class="text-gray-500">查看大队排名</p>
+                        </button>
+                        
+                        <button onclick="showWeaknessAnalysis()" 
+                            class="glass-card p-8 text-center hover-card">
+                            <div class="h-16 w-16 rounded-2xl bg-gradient-to-br from-warning/20 to-warning/10 flex items-center justify-center mx-auto mb-4">
+                                <i class="fa fa-exclamation-triangle text-warning text-2xl"></i>
+                            </div>
+                            <h3 class="text-lg font-semibold text-gray-800 mb-2">弱势项目</h3>
+                            <p class="text-gray-500">针对性训练建议</p>
+                        </button>
+                    </div>
+                    
+                    <!-- 本月考核情况 -->
+                    <div class="glass-card p-8">
+                        <div class="flex items-center justify-between mb-8">
+                            <h2 class="text-2xl font-bold text-gray-800">本月考核情况</h2>
+                            <button onclick="navigateTo('my-scores')" 
+                                class="text-primary font-semibold text-lg flex items-center hover:underline">
+                                查看全部 <i class="fa fa-arrow-right ml-2"></i>
+                            </button>
+                        </div>
+                        
+                        <div class="space-y-4">
+                            ${scores.slice(0, 3).map(score => `
+                                <div class="flex items-center justify-between p-6 bg-gray-50/50 rounded-2xl hover:bg-gray-100/50 transition-colors">
+                                    <div class="flex items-center">
+                                        <div class="h-12 w-12 rounded-xl bg-gradient-to-br from-primary/10 to-primary/5 flex items-center justify-center mr-4">
+                                            <i class="fa fa-running text-primary"></i>
+                                        </div>
+                                        <div>
+                                            <h3 class="font-semibold text-gray-800">${score.item}</h3>
+                                            <p class="text-sm text-gray-500">${score.date}</p>
+                                        </div>
+                                    </div>
+                                    <div class="text-right">
+                                        <div class="text-2xl font-bold text-primary">${score.score}<span class="text-sm text-gray-500">/100</span></div>
+                                        <span class="badge ${score.evaluation === '优秀' ? 'badge-success' : 'badge-warning'}">
+                                            ${score.evaluation}
+                                        </span>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        async function loadAdminDashboard() {
+            const stats = getDashboardStats();
+            
+            return `
+                <div class="space-y-8 animate-fade-in-up">
+                    <!-- 统计数据 -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                        ${stats.map(stat => `
+                            <div class="glass-card p-8 hover-card" onclick="${stat.onclick}">
+                                <div class="flex items-center">
+                                    <div class="h-16 w-16 rounded-2xl ${stat.color} flex items-center justify-center mr-5">
+                                        <i class="fa ${stat.icon} text-white text-2xl"></i>
+                                    </div>
+                                    <div>
+                                        <p class="text-sm text-gray-500 mb-1">${stat.label}</p>
+                                        <p class="text-3xl font-bold text-gray-800">${stat.value}</p>
+                                        <div class="flex items-center mt-3">
+                                            <i class="fa fa-arrow-${stat.trend > 0 ? 'up text-green-500' : 'down text-red-500'} mr-2"></i>
+                                            <span class="text-sm ${stat.trend > 0 ? 'text-green-600' : 'text-red-600'} font-semibold">
+                                                ${stat.trend > 0 ? '+' : ''}${stat.trend}%
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                    
+                    <!-- 快速操作 -->
+                    <div class="glass-card p-8">
+                        <h2 class="text-2xl font-bold text-gray-800 mb-6">快速操作</h2>
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+                            <button onclick="showAddAssessmentModal()" 
+                                class="flex flex-col items-center justify-center p-6 border-3 border-dashed border-gray-300/50 rounded-2xl hover:border-primary hover:bg-primary/5 transition-all duration-300 hover-card">
+                                <i class="fa fa-plus text-primary text-3xl mb-3"></i>
+                                <span class="text-base font-semibold text-gray-700">新增考核</span>
+                            </button>
+                            
+                            <button onclick="showImportModal()" 
+                                class="flex flex-col items-center justify-center p-6 border-3 border-dashed border-gray-300/50 rounded-2xl hover:border-primary hover:bg-primary/5 transition-all duration-300 hover-card">
+                                <i class="fa fa-upload text-primary text-3xl mb-3"></i>
+                                <span class="text-base font-semibold text-gray-700">导入成绩</span>
+                            </button>
+                            
+                            <button onclick="navigateTo('personnel')" 
+                                class="flex flex-col items-center justify-center p-6 border-3 border-dashed border-gray-300/50 rounded-2xl hover:border-primary hover:bg-primary/5 transition-all duration-300 hover-card">
+                                <i class="fa fa-user-plus text-primary text-3xl mb-3"></i>
+                                <span class="text-base font-semibold text-gray-700">添加人员</span>
+                            </button>
+                            
+                            <button onclick="exportDashboardData()" 
+                                class="flex flex-col items-center justify-center p-6 border-3 border-dashed border-gray-300/50 rounded-2xl hover:border-primary hover:bg-primary/5 transition-all duration-300 hover-card">
+                                <i class="fa fa-download text-primary text-3xl mb-3"></i>
+                                <span class="text-base font-semibold text-gray-700">导出数据</span>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- 最近考核 -->
+                    <div class="glass-card p-8">
+                        <div class="flex items-center justify-between mb-8">
+                            <h2 class="text-2xl font-bold text-gray-800">最近考核记录</h2>
+                            <button onclick="navigateTo('assessments')" 
+                                class="text-primary font-semibold text-lg flex items-center hover:underline">
+                                查看全部 <i class="fa fa-arrow-right ml-2"></i>
+                            </button>
+                        </div>
+                        
+                        <div class="overflow-x-auto">
+                            <table class="table-modern min-w-full">
+                                <thead>
+                                    <tr>
+                                        <th class="px-8 py-6 text-left font-semibold text-gray-700">考核名称</th>
+                                        <th class="px-8 py-6 text-left font-semibold text-gray-700">考核日期</th>
+                                        <th class="px-8 py-6 text-left font-semibold text-gray-700">参与人数</th>
+                                        <th class="px-8 py-6 text-left font-semibold text-gray-700">通过率</th>
+                                        <th class="px-8 py-6 text-left font-semibold text-gray-700">状态</th>
+                                        <th class="px-8 py-6 text-left font-semibold text-gray-700">操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${getAssessments().slice(0, 3).map(assessment => `
+                                        <tr class="hover:bg-gradient-to-r hover:from-primary/5 hover:to-transparent">
+                                            <td class="px-8 py-6">
+                                                <div class="font-semibold text-gray-800">${assessment.name}</div>
+                                                <div class="text-sm text-gray-500">${assessment.id}</div>
+                                            </td>
+                                            <td class="px-8 py-6 font-medium">${assessment.date}</td>
+                                            <td class="px-8 py-6">
+                                                <div class="flex items-center">
+                                                    <i class="fa fa-users text-gray-400 mr-2"></i>
+                                                    <span class="font-semibold">${assessment.participants}人</span>
+                                                </div>
+                                            </td>
+                                            <td class="px-8 py-6">
+                                                <div class="flex items-center">
+                                                    <div class="w-24 bg-gray-200 rounded-full h-2.5 mr-3">
+                                                        <div class="bg-success h-2.5 rounded-full" style="width: ${assessment.passRate}%"></div>
+                                                    </div>
+                                                    <span class="font-semibold text-gray-800">${assessment.passRate}%</span>
+                                                </div>
+                                            </td>
+                                            <td class="px-8 py-6">
+                                                <span class="badge ${assessment.status === 'completed' ? 'badge-success' : 'badge-warning'}">
+                                                    ${assessment.status === 'completed' ? '已完成' : '进行中'}
+                                                </span>
+                                            </td>
+                                            <td class="px-8 py-6">
+                                                <button onclick="viewAssessmentDetail('${assessment.id}')" 
+                                                    class="text-primary font-medium hover:underline">
+                                                    查看详情
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    `).join('')}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // ==================== 数据获取函数 ====================
+        function getMyScores() {
+            return [
+                { item: '3000米跑', result: '12:35', score: 92, evaluation: '优秀', date: '2024-12-15' },
+                { item: '单杠引体向上', result: '25次', score: 88, evaluation: '良好', date: '2024-12-15' },
+                { item: '100米负重跑', result: '14.5秒', score: 85, evaluation: '良好', date: '2024-12-15' },
+                { item: '灭火器操作', result: '95分', score: 95, evaluation: '优秀', date: '2024-12-15' }
+            ];
+        }
+
+        function getMyProgress() {
+            return {
+                weaknesses: [
+                    {
+                        item: '100米负重跑',
+                        score: 78,
+                        severity: 'high',
+                        advice: '需要增加爆发力训练，每周进行2次短跑冲刺练习',
+                        schedule: '周一、周三下午'
+                    }
+                ],
+                trend: 8
+            };
+        }
+
+        function getDashboardStats() {
+            return [
+                {
+                    label: '消防员总数',
+                    value: '128人',
+                    trend: 3.2,
+                    icon: 'fa-users',
+                    color: 'bg-gradient-to-br from-primary to-primary-light',
+                    onclick: 'navigateTo("personnel")'
+                },
+                {
+                    label: '本月考核次数',
+                    value: '32次',
+                    trend: 8.5,
+                    icon: 'fa-clipboard-check',
+                    color: 'bg-gradient-to-br from-secondary to-secondary-light',
+                    onclick: 'navigateTo("assessments")'
+                },
+                {
+                    label: '考核通过率',
+                    value: '92.5%',
+                    trend: 2.1,
+                    icon: 'fa-check-circle',
+                    color: 'bg-gradient-to-br from-success to-emerald-400',
+                    onclick: 'showPassRateDetail()'
+                },
+                {
+                    label: '本月参考率',
+                    value: '96.9%',
+                    trend: -1.2,
+                    icon: 'fa-user-check',
+                    color: 'bg-gradient-to-br from-warning to-amber-400',
+                    onclick: 'showAttendanceDetail()'
+                }
+            ];
+        }
+
+        function getAssessments() {
+            return [
+                {
+                    id: 'AS202412001',
+                    name: '12月体能考核',
+                    date: '2024-12-15',
+                    type: '体能',
+                    participants: 128,
+                    passRate: 92.5,
+                    status: 'completed'
+                },
+                {
+                    id: 'AS202411001',
+                    name: '11月技能考核',
+                    date: '2024-11-20',
+                    type: '技能',
+                    participants: 125,
+                    passRate: 90.8,
+                    status: 'completed'
+                }
+            ];
+        }
+
+        function getRankings() {
+            return {
+                overall: Array.from({length: 20}, (_, i) => ({
+                    id: `FD${String(i+1).padStart(3, '0')}`,
+                    name: i === 0 ? '郑金秀' : `消防员${i+1}`,
+                    department: i < 5 ? '阳东大队' : i < 10 ? '特勤一中队' : i < 15 ? '特勤二中队' : '战勤保障',
+                    score: 95 - Math.floor(i / 2),
+                    scores: {
+                        '3000米跑': 95 - i,
+                        '引体向上': 92 - i,
+                        '负重跑': 90 - i
+                    }
+                }))
+            };
+        }
+
+        // ==================== 工具函数 ====================
+        function initMockData() {
+            const firefighters = Array.from({length: 20}, (_, i) => ({
+                id: `FD${String(i+1).padStart(3, '0')}`,
+                name: i === 0 ? '郑金秀' : `消防员${i+1}`,
+                age: 25 + Math.floor(Math.random() * 15),
+                gender: Math.random() > 0.1 ? '男' : '女',
+                department: i < 5 ? '阳东大队' : i < 10 ? '特勤一中队' : i < 15 ? '特勤二中队' : '战勤保障',
+                position: i === 0 ? '中队长' : i < 3 ? '副中队长' : i < 5 ? '指导员' : '消防员',
+                joinDate: `202${Math.floor(Math.random() * 4)}-${String(Math.floor(Math.random() * 12) + 1).padStart(2, '0')}-${String(Math.floor(Math.random() * 28) + 1).padStart(2, '0')}`
+            }));
+            
+            localStorage.setItem('firefighters', JSON.stringify(firefighters));
+        }
+
+        function showNotification(title, message, type = 'success') {
+            const notification = document.getElementById('notification');
+            const titleEl = document.getElementById('notification-title');
+            const messageEl = document.getElementById('notification-message');
+            
+            let borderColor = 'border-l-success';
+            let icon = 'fa-check-circle';
+            
+            if (type === 'error') {
+                borderColor = 'border-l-secondary';
+                icon = 'fa-exclamation-circle';
+            } else if (type === 'warning') {
+                borderColor = 'border-l-warning';
+                icon = 'fa-exclamation-triangle';
+            } else if (type === 'info') {
+                borderColor = 'border-l-primary';
+                icon = 'fa-info-circle';
+            }
+            
+            notification.className = `fixed top-6 right-6 z-50 transform translate-x-full transition-transform duration-500 ${borderColor}`;
+            notification.querySelector('.flex-shrink-0').innerHTML = `<i class="fa ${icon} fa-2x"></i>`;
+            titleEl.textContent = title;
+            messageEl.textContent = message;
+            
+            setTimeout(() => {
+                notification.classList.remove('translate-x-full');
+            }, 10);
+            
+            setTimeout(hideNotification, 4000);
+        }
+
+        function hideNotification() {
+            const notification = document.getElementById('notification');
+            notification.classList.add('translate-x-full');
+        }
+
+        function showLoading(message = '请稍候...') {
+            const loadingEl = document.getElementById('loading-overlay');
+            if (loadingEl) {
+                document.getElementById('loading-message').textContent = message;
+                loadingEl.classList.remove('hidden');
+            }
+        }
+
+        function hideLoading() {
+            const loadingEl = document.getElementById('loading-overlay');
+            if (loadingEl) {
+                loadingEl.classList.add('hidden');
+            }
+        }
+
+        function showSkeleton(container) {
+            const skeletonTemplate = document.getElementById('skeleton-template');
+            container.innerHTML = skeletonTemplate.innerHTML;
+        }
+
+        function hideSkeleton(container) {
+            container.querySelectorAll('.skeleton').forEach(el => {
+                el.classList.remove('skeleton');
+                el.classList.add('bg-gray-100');
+            });
+        }
+
+        function monitorNetwork() {
+            const updateNetworkStatus = () => {
+                const isOnline = navigator.onLine;
+                const indicator = document.getElementById('network-indicator');
+                
+                if (indicator) {
+                    indicator.innerHTML = `
+                        <i class="fa fa-${isOnline ? 'wifi' : 'signal'} mr-2"></i>
+                        ${isOnline ? '在线' : '离线'}
+                    `;
+                    indicator.className = `px-4 py-2 ${isOnline ? 'bg-gradient-to-r from-green-100 to-emerald-100 text-green-800' : 'bg-gradient-to-r from-yellow-100 to-amber-100 text-yellow-800'} rounded-xl font-medium`;
+                }
+            };
+            
+            updateNetworkStatus();
+            window.addEventListener('online', updateNetworkStatus);
+            window.addEventListener('offline', updateNetworkStatus);
+        }
+
+        function updateDateTime() {
+            const now = new Date();
+            const dateStr = now.toLocaleDateString('zh-CN', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                weekday: 'long'
+            });
+            const timeStr = now.toLocaleTimeString('zh-CN', {
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+            
+            const dateTimeElement = document.getElementById('current-datetime');
+            if (dateTimeElement) {
+                dateTimeElement.textContent = `${dateStr} ${timeStr}`;
+            }
+        }
+
+        // ==================== 页面组件初始化 ====================
+        function initPageComponents(page) {
+            switch(page) {
+                case 'dashboard':
+                    initDashboardCharts();
+                    break;
+                case 'settings':
+                    initSettingsTabs();
+                    break;
+            }
+            
+            // 初始化标签页
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    showTab(this.dataset.tab);
+                });
+            });
+        }
+
+        function showTab(tab) {
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.tab === tab);
+            });
+            
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.toggle('hidden', !content.id.includes(tab));
+            });
+        }
+
+        // ==================== 导出功能 ====================
+        function exportRankings() {
+            try {
+                showLoading('正在导出排名数据...');
+                
+                const rankings = getRankings();
+                const wb = XLSX.utils.book_new();
+                
+                const overallData = rankings.overall.map((rank, index) => ({
+                    排名: index + 1,
+                    姓名: rank.name,
+                    部门: rank.department,
+                    综合得分: rank.score,
+                    '3000米跑': rank.scores['3000米跑'],
+                    引体向上: rank.scores['引体向上'],
+                    负重跑: rank.scores['负重跑']
+                }));
+                
+                const wsOverall = XLSX.utils.json_to_sheet(overallData);
+                XLSX.utils.book_append_sheet(wb, wsOverall, '综合排名');
+                
+                const fileName = `消防考核排名_${new Date().toLocaleDateString()}.xlsx`;
+                XLSX.writeFile(wb, fileName);
+                
+                showNotification('导出成功', `排名数据已导出为 ${fileName}`);
+            } catch (error) {
+                showNotification('导出失败', '请检查网络连接后重试', 'error');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        function exportDashboardData() {
+            showNotification('功能提示', '数据导出功能开发中...', 'info');
+        }
+
+        // ==================== 示例功能函数 ====================
+        function showProgressChart() {
+            showNotification('功能提示', '进步分析图表功能开发中...', 'info');
+        }
+
+        function showWeaknessAnalysis() {
+            showNotification('功能提示', '弱势项目分析功能开发中...', 'info');
+        }
+
+        function showAddAssessmentModal() {
+            showNotification('功能提示', '新增考核功能开发中...', 'info');
+        }
+
+        function showImportModal() {
+            showNotification('功能提示', '导入成绩功能开发中...', 'info');
+        }
+
+        function showPassRateDetail() {
+            showNotification('功能提示', '通过率详情功能开发中...', 'info');
+        }
+
+        function showAttendanceDetail() {
+            showNotification('功能提示', '参考率详情功能开发中...', 'info');
+        }
+
+        function viewAssessmentDetail(id) {
+            showNotification('功能提示', `查看考核 ${id} 详情功能开发中...`, 'info');
+        }
+
+        function logout() {
+            if (confirm('确定要退出登录吗？')) {
+                currentUser = null;
+                pageHistory = [];
+                currentPage = 'dashboard';
+                
+                document.getElementById('login-page').classList.remove('hidden');
+                document.getElementById('app-container').classList.add('hidden');
+                
+                showNotification('已退出登录', '欢迎下次使用');
+            }
+        }
+
+        // ==================== 全局暴露函数 ====================
+        window.navigateTo = navigateTo;
+        window.goBack = goBack;
+        window.exportRankings = exportRankings;
+        window.exportDashboardData = exportDashboardData;
+        window.logout = logout;
+        window.showProgressChart = showProgressChart;
+        window.showWeaknessAnalysis = showWeaknessAnalysis;
+        window.showAddAssessmentModal = showAddAssessmentModal;
+        window.showImportModal = showImportModal;
+        window.showPassRateDetail = showPassRateDetail;
+        window.showAttendanceDetail = showAttendanceDetail;
+        window.viewAssessmentDetail = viewAssessmentDetail;
+
+        // 页面加载函数（需要在页面加载后调用的函数）
+        async function loadMyScores() {
+            return `
+                <div class="space-y-8 animate-fade-in-up">
+                    <div class="glass-card p-8">
+                        <h1 class="text-3xl font-bold text-gray-800 mb-2">我的成绩</h1>
+                        <p class="text-gray-600">查看个人历史考核成绩和进步情况</p>
+                    </div>
+                    <div class="text-center py-16 text-gray-500">
+                        <i class="fa fa-chart-line text-6xl mb-4 opacity-30"></i>
+                        <p class="text-xl">我的成绩页面开发中...</p>
+                    </div>
+                </div>
+            `;
+        }
+
+        async function loadRankings() {
+            const rankings = getRankings();
+            
+            return `
+                <div class="space-y-8 animate-fade-in-up">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h1 class="text-3xl font-bold text-gray-800">成绩排名</h1>
+                            <p class="text-gray-600 mt-2">实时更新的大队综合排名</p>
+                        </div>
+                        <button onclick="exportRankings()" class="btn-primary px-8 py-4 rounded-2xl text-lg">
+                            <i class="fa fa-download mr-3"></i>导出排名
+                        </button>
+                    </div>
+                    
+                    <!-- 排名表格 -->
+                    <div class="glass-card overflow-hidden">
+                        <div class="px-8 py-6 border-b border-gray-200/50">
+                            <div class="flex items-center justify-between">
+                                <h3 class="text-xl font-bold text-gray-800">综合成绩排名</h3>
+                                <div class="flex items-center space-x-4">
+                                    <div class="relative">
+                                        <select class="appearance-none bg-white border border-gray-300 rounded-xl px-5 py-3 pr-10 focus:ring-2 focus:ring-primary focus:border-transparent">
+                                            <option>全部项目</option>
+                                            <option>体能项目</option>
+                                            <option>技能项目</option>
+                                        </select>
+                                        <div class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 pointer-events-none">
+                                            <i class="fa fa-chevron-down"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="overflow-x-auto">
+                            <table class="table-modern min-w-full">
+                                <thead>
+                                    <tr>
+                                        <th class="px-8 py-6 text-left font-semibold text-gray-700">排名</th>
+                                        <th class="px-8 py-6 text-left font-semibold text-gray-700">姓名</th>
+                                        <th class="px-8 py-6 text-left font-semibold text-gray-700">部门</th>
+                                        <th class="px-8 py-6 text-left font-semibold text-gray-700">3000米跑</th>
+                                        <th class="px-8 py-6 text-left font-semibold text-gray-700">引体向上</th>
+                                        <th class="px-8 py-6 text-left font-semibold text-gray-700">综合得分</th>
+                                        <th class="px-8 py-6 text-left font-semibold text-gray-700">操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${rankings.overall.slice(0, 10).map((rank, index) => `
+                                        <tr class="hover:bg-gradient-to-r hover:from-primary/5 hover:to-transparent">
+                                            <td class="px-8 py-6">
+                                                <div class="flex items-center">
+                                                    <span class="h-12 w-12 rounded-2xl ${index < 3 ? 'gradient-bg' : 'bg-gray-100'} flex items-center justify-center text-${index < 3 ? 'white' : 'gray-800'} font-bold text-lg">
+                                                        ${index + 1}
+                                                    </span>
+                                                </div>
+                                            </td>
+                                            <td class="px-8 py-6">
+                                                <div class="flex items-center">
+                                                    <div class="h-12 w-12 rounded-2xl ${index < 3 ? 'gradient-bg' : 'bg-gray-100'} flex items-center justify-center mr-4">
+                                                        <i class="fa fa-user ${index < 3 ? 'text-white' : 'text-gray-600'}"></i>
+                                                    </div>
+                                                    <div>
+                                                        <p class="font-semibold text-gray-800">${rank.name}</p>
+                                                        <p class="text-sm text-gray-500">${rank.id}</p>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td class="px-8 py-6">
+                                                <span class="badge badge-primary">${rank.department}</span>
+                                            </td>
+                                            <td class="px-8 py-6">
+                                                <div class="font-bold text-primary">${rank.scores['3000米跑']}分</div>
+                                            </td>
+                                            <td class="px-8 py-6">
+                                                <div class="font-bold text-primary">${rank.scores['引体向上']}分</div>
+                                            </td>
+                                            <td class="px-8 py-6">
+                                                <div class="text-2xl font-bold text-primary">${rank.score}</div>
+                                            </td>
+                                            <td class="px-8 py-6">
+                                                <button class="text-primary font-medium hover:underline">
+                                                    查看详情
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    `).join('')}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        async function loadPersonnelManagement() {
+            return `
+                <div class="space-y-8 animate-fade-in-up">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h1 class="text-3xl font-bold text-gray-800">人员管理</h1>
+                            <p class="text-gray-600 mt-2">管理员可随时修改人员信息</p>
+                        </div>
+                        <button onclick="showAddPersonnelModal()" class="btn-primary px-8 py-4 rounded-2xl text-lg">
+                            <i class="fa fa-plus mr-3"></i>新增消防员
+                        </button>
+                    </div>
+                    <div class="text-center py-16 text-gray-500">
+                        <i class="fa fa-users text-6xl mb-4 opacity-30"></i>
+                        <p class="text-xl">人员管理页面开发中...</p>
+                    </div>
+                </div>
+            `;
+        }
+
+        async function loadAssessmentManagement() {
+            return `
+                <div class="space-y-8 animate-fade-in-up">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h1 class="text-3xl font-bold text-gray-800">考核管理</h1>
+                            <p class="text-gray-600 mt-2">管理考核项目和标准</p>
+                        </div>
+                        <button onclick="showAddAssessmentModal()" class="btn-primary px-8 py-4 rounded-2xl text-lg">
+                            <i class="fa fa-plus mr-3"></i>新增考核
+                        </button>
+                    </div>
+                    <div class="text-center py-16 text-gray-500">
+                        <i class="fa fa-clipboard-check text-6xl mb-4 opacity-30"></i>
+                        <p class="text-xl">考核管理页面开发中...</p>
+                    </div>
+                </div>
+            `;
+        }
+
+        async function loadSystemSettings() {
+            return `
+                <div class="space-y-8 animate-fade-in-up">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h1 class="text-3xl font-bold text-gray-800">系统设置</h1>
+                            <p class="text-gray-600 mt-2">高级管理员可修改所有系统设置</p>
+                        </div>
+                        <button onclick="saveSystemSettings()" class="btn-primary px-8 py-4 rounded-2xl text-lg">
+                            <i class="fa fa-save mr-3"></i>保存设置
+                        </button>
+                    </div>
+                    <div class="text-center py-16 text-gray-500">
+                        <i class="fa fa-cog text-6xl mb-4 opacity-30"></i>
+                        <p class="text-xl">系统设置页面开发中...</p>
+                    </div>
+                </div>
+            `;
+        }
+
+        function showAddPersonnelModal() {
+            showNotification('功能提示', '新增消防员功能开发中...', 'info');
+        }
+
+        function saveSystemSettings() {
+            showNotification('保存成功', '系统设置已保存');
+        }
+
+        function initDashboardCharts() {
+            // 图表初始化
+            setTimeout(() => {
+                // 这里可以初始化图表
+                console.log('Dashboard charts initialized');
+            }, 100);
+        }
+
+        function initSettingsTabs() {
+            showTab('basic');
+        }
+    </script>
+</body>
+</html>
