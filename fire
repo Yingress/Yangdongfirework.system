@@ -4,17 +4,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>阳东消防考核管理系统</title>
+    <link rel="icon" href="https://p3-flow-imagex-sign.byteimg.com/tos-cn-i-a9rns2rl98/rc/pc/super_tool/35ead38e286d43839f39610a694ae770~tplv-a9rns2rl98-image.image?rcl=202512231710090261208EAC0F862C5B25&rk3s=8e244e95&rrcfp=f06b921b&x-expires=1769073077&x-signature=l6BPzJ4QeAZbByrMEwikZwLggEY%3D">
     
-    <!-- 网站图标 -->
-    <link rel="icon" href="https://img.icons8.com/color/96/000000/fire-station.png">
-    
-    <!-- 外部资源 -->
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Font Awesome -->
     <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    
+    <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js"></script>
+    
+    <!-- SheetJS for Excel export -->
     <script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
     
-    <!-- 美化版CSS样式 -->
+    <!-- 自定义样式 -->
     <style>
         /* ===== 高级主题变量 ===== */
         :root {
@@ -130,7 +134,7 @@
             100% { transform: translate(-40px, -40px) rotate(360deg); }
         }
         
-        @keyframes fadeInUp {
+        @keyframes fadeIn {
             from {
                 opacity: 0;
                 transform: translateY(40px);
@@ -146,8 +150,8 @@
             100% { background-position: 1000px 0; }
         }
         
-        .animate-fade-in-up {
-            animation: fadeInUp 0.8s ease-out;
+        .animate-fade-in {
+            animation: fadeIn 0.8s ease-out;
         }
         
         .animate-delay-100 { animation-delay: 0.1s; }
@@ -165,75 +169,22 @@
             box-shadow: var(--shadow-lg);
         }
         
-        /* ===== 高级表格 ===== */
-        .table-modern {
-            border-collapse: separate;
-            border-spacing: 0;
+        /* ===== 输入框美化 ===== */
+        .input-modern {
+            background: rgba(255, 255, 255, 0.7);
+            border: 2px solid rgba(226, 232, 240, 0.8);
+            border-radius: 14px;
+            padding: 16px 20px;
+            font-size: 15px;
+            transition: all 0.3s ease;
             width: 100%;
         }
         
-        .table-modern thead th {
-            background: linear-gradient(to bottom, rgba(248, 250, 252, 0.9), rgba(255, 255, 255, 0.9));
-            padding: 20px 24px;
-            font-weight: 600;
-            color: var(--dark);
-            border-bottom: 2px solid rgba(226, 232, 240, 0.6);
-            position: sticky;
-            top: 0;
-            backdrop-filter: blur(10px);
-            font-size: 15px;
-        }
-        
-        .table-modern tbody tr {
-            transition: all 0.3s ease;
-            border-bottom: 1px solid rgba(226, 232, 240, 0.4);
-        }
-        
-        .table-modern tbody tr:hover {
-            background: linear-gradient(to right, rgba(10, 36, 99, 0.04), rgba(231, 29, 54, 0.04));
-            transform: translateX(8px);
-        }
-        
-        .table-modern tbody td {
-            padding: 20px 24px;
-            vertical-align: middle;
-        }
-        
-        /* ===== 徽章样式 ===== */
-        .badge {
-            display: inline-flex;
-            align-items: center;
-            padding: 8px 16px;
-            border-radius: 100px;
-            font-size: 13px;
-            font-weight: 600;
-            line-height: 1;
-        }
-        
-        .badge-success {
-            background: linear-gradient(135deg, var(--success), #34D399);
-            color: white;
-            box-shadow: 0 4px 15px rgba(46, 196, 182, 0.3);
-        }
-        
-        .badge-warning {
-            background: linear-gradient(135deg, var(--warning), #FBBF24);
-            color: white;
-            box-shadow: 0 4px 15px rgba(255, 159, 28, 0.3);
-        }
-        
-        .badge-primary {
-            background: linear-gradient(135deg, var(--primary-light), var(--primary));
-            color: white;
-            box-shadow: 0 4px 15px rgba(10, 36, 99, 0.3);
-        }
-        
-        /* ===== 加载动画 ===== */
-        .loading-shimmer {
-            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
-            background-size: 1200px 100%;
-            animation: shimmer 1.5s infinite linear;
-            border-radius: 12px;
+        .input-modern:focus {
+            background: white;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(10, 36, 99, 0.1);
+            outline: none;
         }
         
         /* ===== 滚动条美化 ===== */
@@ -256,23 +207,12 @@
             background: linear-gradient(135deg, var(--primary), var(--secondary));
         }
         
-        /* ===== 火焰特效装饰 ===== */
-        .fire-effect {
-            position: relative;
-        }
-        
-        .fire-effect::after {
-            content: '';
-            position: absolute;
-            bottom: -6px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 70%;
-            height: 4px;
-            background: linear-gradient(90deg, transparent, var(--secondary), transparent);
-            border-radius: 100%;
-            filter: blur(3px);
-            opacity: 0.7;
+        /* ===== 渐变文字 ===== */
+        .gradient-text {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
         
         /* ===== 响应式调整 ===== */
@@ -286,127 +226,6 @@
                 padding: 14px 28px;
                 font-size: 15px;
             }
-            
-            .table-modern thead th,
-            .table-modern tbody td {
-                padding: 16px 20px;
-            }
-        }
-        
-        /* ===== 输入框美化 ===== */
-        .input-modern {
-            background: rgba(255, 255, 255, 0.7);
-            border: 2px solid rgba(226, 232, 240, 0.8);
-            border-radius: 14px;
-            padding: 16px 20px;
-            font-size: 15px;
-            transition: all 0.3s ease;
-            width: 100%;
-        }
-        
-        .input-modern:focus {
-            background: white;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 4px rgba(10, 36, 99, 0.1);
-            outline: none;
-        }
-        
-        /* ===== 进度条 ===== */
-        .progress-bar {
-            height: 8px;
-            background: rgba(226, 232, 240, 0.6);
-            border-radius: 4px;
-            overflow: hidden;
-        }
-        
-        .progress-bar-fill {
-            height: 100%;
-            background: linear-gradient(90deg, var(--primary), var(--secondary));
-            border-radius: 4px;
-            transition: width 0.6s ease;
-        }
-        
-        /* ===== 下拉菜单美化 ===== */
-        .dropdown-menu {
-            background: var(--glass-bg);
-            backdrop-filter: blur(20px);
-            border: 1px solid var(--glass-border);
-            border-radius: 16px;
-            box-shadow: var(--shadow-lg);
-            min-width: 200px;
-            overflow: hidden;
-        }
-        
-        /* ===== 通知样式 ===== */
-        .notification {
-            background: var(--glass-bg);
-            backdrop-filter: blur(20px);
-            border: 1px solid var(--glass-border);
-            border-radius: 16px;
-            box-shadow: var(--shadow-lg);
-            padding: 20px;
-            max-width: 400px;
-            border-left: 5px solid var(--success);
-            animation: slideInRight 0.5s ease-out;
-        }
-        
-        @keyframes slideInRight {
-            from {
-                transform: translateX(100%);
-                opacity: 0;
-            }
-            to {
-                transform: translateX(0);
-                opacity: 1;
-            }
-        }
-        
-        /* ===== 统计卡片 ===== */
-        .stat-card {
-            padding: 28px;
-            border-radius: 20px;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .stat-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            right: 0;
-            width: 100px;
-            height: 100px;
-            background: radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px);
-            background-size: 20px 20px;
-            opacity: 0.5;
-        }
-        
-        /* ===== 标签页样式 ===== */
-        .tab-button {
-            padding: 14px 28px;
-            border-radius: 12px;
-            font-weight: 600;
-            color: #64748b;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .tab-button.active {
-            color: var(--primary);
-            background: rgba(10, 36, 99, 0.08);
-        }
-        
-        .tab-button.active::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 40%;
-            height: 3px;
-            background: linear-gradient(90deg, var(--primary), var(--secondary));
-            border-radius: 2px;
         }
         
         /* ===== 骨架屏 ===== */
@@ -416,51 +235,23 @@
             animation: shimmer 1.5s infinite linear;
         }
         
-        /* ===== 模态框 ===== */
-        .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.5);
-            backdrop-filter: blur(10px);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-            animation: fadeIn 0.3s ease-out;
+        /* ===== 表格悬停效果 ===== */
+        .table-row-hover:hover {
+            background-color: #f8fafc;
+            transition: background-color 0.2s;
         }
         
-        .modal-content {
-            background: var(--glass-bg);
-            backdrop-filter: blur(30px);
-            border: 1px solid var(--glass-border);
-            border-radius: 24px;
-            max-width: 90%;
-            max-height: 90vh;
-            overflow-y: auto;
-            animation: slideUp 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        /* ===== 动画效果 ===== */
+        @keyframes slideInRight {
+            from { transform: translateX(100%); }
+            to { transform: translateX(0); }
         }
         
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-        
-        @keyframes slideUp {
-            from {
-                transform: translateY(40px);
-                opacity: 0;
-            }
-            to {
-                transform: translateY(0);
-                opacity: 1;
-            }
+        .animate-slide-in-right {
+            animation: slideInRight 0.3s ease-out;
         }
     </style>
     
-    <!-- Tailwind配置 -->
     <script>
         tailwind.config = {
             theme: {
@@ -472,110 +263,75 @@
                         warning: '#FF9F1C',
                         fireblue: '#1E3A8A',
                         firedark: '#0F172A'
-                    },
-                    animation: {
-                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-                        'bounce-slow': 'bounce 2s infinite',
-                        'spin-slow': 'spin 3s linear infinite'
                     }
                 }
             }
         }
     </script>
 </head>
-
 <body class="scrollbar-thin">
     <!-- 登录页面 -->
-    <div id="login-page" class="min-h-screen flex items-center justify-center p-6 animate-fade-in-up">
+    <div id="login-page" class="min-h-screen flex items-center justify-center p-6 animate-fade-in">
         <!-- 背景装饰 -->
         <div class="absolute inset-0 overflow-hidden">
-            <div class="absolute -top-40 -right-40 w-80 h-80 bg-primary/10 rounded-full blur-3xl"></div>
-            <div class="absolute -bottom-40 -left-40 w-80 h-80 bg-secondary/10 rounded-full blur-3xl"></div>
+            <!-- 主背景渐变 -->
+            <div class="absolute inset-0 bg-gradient-135deg from-blue-50 via-indigo-50 to-purple-50"></div>
+            
+            <!-- 装饰球体 -->
+            <div class="absolute -top-40 -right-40 w-80 h-80 bg-primary/10 rounded-full blur-3xl animate-pulse-slow"></div>
+            <div class="absolute -bottom-40 -left-40 w-80 h-80 bg-secondary/10 rounded-full blur-3xl animate-pulse-slow" style="animation-delay: 1s;"></div>
+            <div class="absolute top-1/3 left-1/4 w-60 h-60 bg-success/5 rounded-full blur-3xl animate-pulse-slow" style="animation-delay: 2s;"></div>
+            
+            <!-- 粒子效果 -->
             <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full h-full">
-                <div class="absolute top-1/4 left-1/4 w-4 h-4 bg-primary/20 rounded-full"></div>
-                <div class="absolute top-1/3 right-1/3 w-6 h-6 bg-secondary/20 rounded-full"></div>
-                <div class="absolute bottom-1/4 right-1/4 w-8 h-8 bg-primary/20 rounded-full"></div>
+                <div class="absolute top-1/4 left-1/4 w-4 h-4 bg-primary/20 rounded-full animate-bounce-slow"></div>
+                <div class="absolute top-1/3 right-1/3 w-6 h-6 bg-secondary/20 rounded-full animate-bounce-slow" style="animation-delay: 0.5s;"></div>
+                <div class="absolute bottom-1/4 right-1/4 w-8 h-8 bg-primary/20 rounded-full animate-bounce-slow" style="animation-delay: 1s;"></div>
+                <div class="absolute top-1/2 left-1/3 w-5 h-5 bg-success/20 rounded-full animate-bounce-slow" style="animation-delay: 1.5s;"></div>
+                <div class="absolute bottom-1/3 left-1/4 w-3 h-3 bg-warning/20 rounded-full animate-bounce-slow" style="animation-delay: 2s;"></div>
             </div>
+            
+            <!-- 网格背景 -->
+            <div class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0zNiAxOGMwLTkuOTQtOC4wNi0xOC0xOC0xOFYyYzguODQgMCAxNiA3LjE2IDE2IDE2aDJ6IiBmaWxsPSIjZmZmIiBmaWxsLW9wYWNpdHk9IjAuMDUiLz48cGF0aCBkPSJNNjAgMzZjMC05Ljk0LTguMDYtMTgtMTgtMThoMnYxOGM4Ljg0IDAgMTYgNy4xNiAxNiAxNmgweiIgZmlsbD0iI2ZmZiIgZmlsbC1vcGFjaXR5PSIwLjA1Ii8+PC9nPjwvc3ZnPg==')] opacity-50"></div>
         </div>
         
-        <!-- 登录卡片 -->
         <div class="relative z-10 w-full max-w-2xl">
-            <div class="glass-card rounded-3xl p-10">
+            <!-- 登录卡片 -->
+            <div class="glass-card rounded-3xl p-10 shadow-2xl border border-white/20">
                 <!-- Logo区域 -->
-                <div class="text-center mb-12 animate-fade-in-up">
+                <div class="text-center mb-12 animate-fade-in">
                     <div class="relative h-32 w-32 rounded-full gradient-bg flex items-center justify-center mx-auto mb-8">
-                        <i class="fa fa-fire text-white text-5xl relative z-10"></i>
+                        <i class="fa fa-shield-alt text-white text-5xl relative z-10"></i>
                         <div class="absolute inset-0 bg-white/20 rounded-full animate-pulse"></div>
                         <div class="absolute -inset-4 bg-gradient-to-r from-primary/30 to-secondary/30 rounded-full blur-xl"></div>
                     </div>
-                    <h1 class="text-5xl font-bold bg-gradient-to-r from-primary via-primary to-secondary bg-clip-text text-transparent mb-3">
-                        阳东消防考核系统
-                    </h1>
+                    <h1 class="text-5xl font-bold gradient-text mb-3">阳东消防考核系统</h1>
                     <p class="text-gray-600 text-lg tracking-wide">智能考核 · 精准管理 · 数据驱动</p>
-                </div>
-                
-                <!-- 角色选择 -->
-                <div class="mb-10 animate-fade-in-up animate-delay-100">
-                    <label class="block text-sm font-semibold text-gray-700 mb-5 text-lg">选择登录身份</label>
-                    <div class="grid grid-cols-3 gap-5">
-                        <button type="button" data-role="firefighter" 
-                            class="role-btn group relative glass-card p-6 rounded-2xl border-2 border-gray-200/50 hover:border-primary transition-all duration-300 hover-card">
-                            <div class="h-14 w-14 rounded-full bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
-                                <i class="fa fa-user text-primary text-2xl"></i>
-                            </div>
-                            <span class="text-base font-semibold text-gray-800 group-hover:text-primary transition-colors">消防员</span>
-                            <div class="absolute -top-3 -right-3 h-8 w-8 rounded-full bg-gradient-to-br from-success to-emerald-400 text-white text-sm flex items-center justify-center shadow-lg transform scale-0 group-hover:scale-100 transition-transform">
-                                <i class="fa fa-check"></i>
-                            </div>
-                        </button>
-                        
-                        <button type="button" data-role="manager" 
-                            class="role-btn group relative glass-card p-6 rounded-2xl border-2 border-gray-200/50 hover:border-primary transition-all duration-300 hover-card">
-                            <div class="h-14 w-14 rounded-full bg-gradient-to-br from-secondary/20 to-secondary/10 flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
-                                <i class="fa fa-user-tie text-secondary text-2xl"></i>
-                            </div>
-                            <span class="text-base font-semibold text-gray-800 group-hover:text-secondary transition-colors">管理员</span>
-                            <div class="absolute -top-3 -right-3 h-8 w-8 rounded-full bg-gradient-to-br from-success to-emerald-400 text-white text-sm flex items-center justify-center shadow-lg transform scale-0 group-hover:scale-100 transition-transform">
-                                <i class="fa fa-check"></i>
-                            </div>
-                        </button>
-                        
-                        <button type="button" data-role="admin" 
-                            class="role-btn group relative glass-card p-6 rounded-2xl border-2 border-gray-200/50 hover:border-primary transition-all duration-300 hover-card">
-                            <div class="h-14 w-14 rounded-full bg-gradient-to-br from-warning/20 to-warning/10 flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
-                                <i class="fa fa-user-shield text-warning text-2xl"></i>
-                            </div>
-                            <span class="text-base font-semibold text-gray-800 group-hover:text-warning transition-colors">超级管理员</span>
-                            <div class="absolute -top-3 -right-3 h-8 w-8 rounded-full bg-gradient-to-br from-success to-emerald-400 text-white text-sm flex items-center justify-center shadow-lg transform scale-0 group-hover:scale-100 transition-transform">
-                                <i class="fa fa-check"></i>
-                            </div>
-                        </button>
-                    </div>
                 </div>
                 
                 <!-- 登录表单 -->
                 <form id="login-form" class="space-y-8">
-                    <div class="animate-fade-in-up animate-delay-200">
+                    <div>
                         <label for="username" class="block text-sm font-semibold text-gray-700 mb-4 flex items-center text-lg">
                             <i class="fa fa-id-card text-primary mr-3 text-xl"></i>账号
                         </label>
                         <div class="relative">
                             <input type="text" id="username" 
-                                class="input-modern w-full pl-14 pr-4 py-5 text-lg" 
-                                placeholder="请输入账号">
+                                class="w-full px-14 py-5 border-2 border-gray-200 rounded-2xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-300" 
+                                placeholder="请输入账号或消防员编号">
                             <div class="absolute left-5 top-1/2 transform -translate-y-1/2 text-gray-400 text-xl">
                                 <i class="fa fa-user-circle"></i>
                             </div>
                         </div>
                     </div>
                     
-                    <div class="animate-fade-in-up animate-delay-300">
+                    <div>
                         <label for="password" class="block text-sm font-semibold text-gray-700 mb-4 flex items-center text-lg">
                             <i class="fa fa-key text-primary mr-3 text-xl"></i>密码
                         </label>
                         <div class="relative">
                             <input type="password" id="password" 
-                                class="input-modern w-full pl-14 pr-4 py-5 text-lg" 
+                                class="w-full px-14 py-5 border-2 border-gray-200 rounded-2xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-300" 
                                 placeholder="请输入密码">
                             <div class="absolute left-5 top-1/2 transform -translate-y-1/2 text-gray-400 text-xl">
                                 <i class="fa fa-lock"></i>
@@ -583,7 +339,7 @@
                         </div>
                     </div>
                     
-                    <div class="flex items-center justify-between animate-fade-in-up animate-delay-400">
+                    <div class="flex items-center justify-between">
                         <label class="flex items-center cursor-pointer group">
                             <div class="relative">
                                 <input type="checkbox" id="remember-me" class="sr-only">
@@ -600,20 +356,14 @@
                     </div>
                     
                     <button type="submit" 
-                        class="w-full btn-primary py-5 rounded-2xl font-semibold text-lg animate-fade-in-up animate-delay-500 mt-8">
+                        class="w-full btn-primary py-5 rounded-2xl font-semibold text-lg hover:shadow-lg transition-all duration-300">
                         <i class="fa fa-sign-in mr-3 text-xl"></i>登录系统
                     </button>
                 </form>
                 
                 <!-- 特色功能展示 -->
-                <div class="mt-14 pt-10 border-t border-gray-200/50">
-                    <div class="grid grid-cols-3 gap-8 text-center">
-                        <div class="space-y-3">
-                            <div class="h-12 w-12 rounded-2xl bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center mx-auto">
-                                <i class="fa fa-shield-alt text-primary text-xl"></i>
-                            </div>
-                            <p class="text-sm font-medium text-gray-700">军用级加密</p>
-                        </div>
+                <div class="mt-14 pt-10 border-t border-gray-200">
+                    <div class="grid grid-cols-2 gap-8 text-center">
                         <div class="space-y-3">
                             <div class="h-12 w-12 rounded-2xl bg-gradient-to-br from-success/20 to-success/10 flex items-center justify-center mx-auto">
                                 <i class="fa fa-chart-line text-success text-xl"></i>
@@ -633,33 +383,32 @@
             <!-- 版本信息 -->
             <div class="text-center mt-8 text-gray-500">
                 <p>© 2024 阳东消防救援大队 · <span class="font-semibold">V3.0 高级版</span></p>
-                <p class="text-sm mt-2 opacity-75">技术支持：消防信息化中心</p>
             </div>
         </div>
     </div>
 
     <!-- 主应用界面 -->
-    <div id="app-container" class="hidden min-h-screen bg-gradient-to-br from-gray-50 to-blue-50">
+    <div id="app-container" class="hidden min-h-screen">
         <!-- 移动端顶部栏 -->
-        <div class="md:hidden fixed top-0 left-0 right-0 glass-card z-50 border-b border-white/20">
-            <div class="flex items-center justify-between px-5 py-4">
+        <div class="md:hidden fixed top-0 left-0 right-0 glass-card z-50">
+            <div class="flex items-center justify-between px-4 py-3">
                 <div class="flex items-center">
-                    <button id="mobile-menu-btn" class="mr-4 text-gray-700 hover:text-primary transition-colors">
-                        <i class="fa fa-bars text-2xl"></i>
+                    <button id="mobile-menu-btn" class="mr-3 text-gray-600">
+                        <i class="fa fa-bars text-xl"></i>
                     </button>
-                    <div class="h-10 w-10 rounded-full gradient-bg flex items-center justify-center mr-3">
+                    <div class="h-8 w-8 rounded-full gradient-bg flex items-center justify-center mr-2">
                         <i class="fa fa-fire text-white"></i>
                     </div>
-                    <h1 class="text-xl font-bold text-gray-800 truncate" id="mobile-page-title">首页</h1>
+                    <h1 class="text-lg font-bold text-gray-800 truncate" id="mobile-page-title">首页</h1>
                 </div>
-                <div class="flex items-center space-x-4">
-                    <button id="mobile-notification" class="relative text-gray-700 hover:text-primary transition-colors">
-                        <i class="fa fa-bell text-xl"></i>
-                        <span class="absolute -top-1 -right-1 h-3 w-3 bg-gradient-to-br from-secondary to-secondary-light rounded-full border-2 border-white"></span>
+                <div class="flex items-center space-x-3">
+                    <button id="mobile-notification" class="relative text-gray-600">
+                        <i class="fa fa-bell text-lg"></i>
+                        <span class="absolute -top-1 -right-1 h-2 w-2 bg-secondary rounded-full"></span>
                     </button>
                     <button id="mobile-profile-btn">
-                        <div class="h-10 w-10 rounded-full gradient-bg flex items-center justify-center">
-                            <i class="fa fa-user text-white"></i>
+                        <div class="h-8 w-8 rounded-full gradient-bg flex items-center justify-center">
+                            <i class="fa fa-user text-white text-sm"></i>
                         </div>
                     </button>
                 </div>
@@ -667,44 +416,42 @@
         </div>
 
         <!-- 移动端侧边栏 -->
-        <div id="mobile-sidebar" class="md:hidden fixed inset-0 bg-black/50 z-50 transform -translate-x-full transition-transform duration-500 backdrop-blur-sm">
-            <div class="w-80 bg-white/95 backdrop-blur-xl h-full overflow-y-auto shadow-2xl animate-slide-in-right">
+        <div id="mobile-sidebar" class="md:hidden fixed inset-0 bg-gray-900/50 z-50 transform -translate-x-full transition-transform duration-300 backdrop-blur-sm">
+            <div class="w-72 bg-white h-full overflow-y-auto shadow-2xl animate-slide-in-right">
                 <!-- 侧边栏头部 -->
-                <div class="gradient-bg p-6">
-                    <div class="flex items-center justify-between mb-8">
+                <div class="gradient-bg p-4">
+                    <div class="flex items-center justify-between">
                         <div class="flex items-center">
-                            <div class="h-12 w-12 rounded-full bg-white/20 flex items-center justify-center mr-4">
-                                <i class="fa fa-fire text-white text-xl"></i>
+                            <div class="h-10 w-10 rounded-full bg-white/20 flex items-center justify-center mr-3">
+                                <i class="fa fa-fire text-white"></i>
                             </div>
-                            <h2 class="text-xl font-bold text-white">阳东消防</h2>
+                            <h2 class="text-lg font-bold text-white">阳东消防</h2>
                         </div>
-                        <button id="close-mobile-menu" class="text-white hover:text-gray-200 transition-colors">
-                            <i class="fa fa-times text-xl"></i>
+                        <button id="close-mobile-menu" class="text-white">
+                            <i class="fa fa-times text-lg"></i>
                         </button>
                     </div>
-                    <div class="flex items-center p-4 bg-white/20 rounded-2xl backdrop-blur-sm">
-                        <div class="h-12 w-12 rounded-full gradient-bg flex items-center justify-center mr-4">
+                    <div class="mt-4 flex items-center p-3 bg-white/20 rounded-xl">
+                        <div class="h-10 w-10 rounded-full gradient-bg flex items-center justify-center mr-3">
                             <i class="fa fa-user text-white"></i>
                         </div>
                         <div class="flex-1 min-w-0">
-                            <p class="text-sm font-semibold text-white truncate" id="mobile-user-name">消防员</p>
-                            <p class="text-xs text-white/80 truncate mt-1" id="mobile-user-role">消防员</p>
+                            <p class="text-sm font-medium text-white truncate" id="mobile-user-name">消防员</p>
+                            <p class="text-xs text-white/80 truncate" id="mobile-user-role">消防员</p>
                         </div>
-                        <i class="fa fa-chevron-right text-white/60"></i>
                     </div>
                 </div>
                 
                 <!-- 侧边栏导航 -->
-                <nav class="p-4 space-y-1" id="mobile-nav-menu">
+                <nav class="p-2" id="mobile-nav-menu">
                     <!-- 动态生成 -->
                 </nav>
                 
                 <!-- 侧边栏底部 -->
-                <div class="mt-auto p-6 border-t border-gray-200/50">
-                    <button onclick="logout()" 
-                        class="w-full flex items-center justify-center px-6 py-3 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-xl hover:shadow-lg transition-all duration-300">
-                        <i class="fa fa-sign-out mr-3"></i>
-                        <span class="font-semibold">退出登录</span>
+                <div class="mt-auto p-4 border-t">
+                    <button onclick="logout()" class="w-full flex items-center justify-center px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-xl transition-colors">
+                        <i class="fa fa-sign-out mr-2"></i>
+                        <span>退出登录</span>
                     </button>
                 </div>
             </div>
@@ -713,50 +460,50 @@
         <!-- 桌面端布局 -->
         <div class="hidden md:flex h-screen">
             <!-- 左侧边栏 -->
-            <aside class="w-72 glass-card flex flex-col border-r border-white/20">
+            <aside class="w-64 glass-card flex flex-col border-r border-gray-200/50">
                 <!-- Logo -->
-                <div class="p-8 border-b border-white/20">
+                <div class="p-4 border-b">
                     <div class="flex items-center">
-                        <div class="h-14 w-14 rounded-2xl gradient-bg flex items-center justify-center mr-4">
-                            <i class="fa fa-fire text-white text-xl"></i>
+                        <div class="h-10 w-10 rounded-full gradient-bg flex items-center justify-center mr-3">
+                            <i class="fa fa-fire text-white"></i>
                         </div>
                         <div>
-                            <h1 class="text-2xl font-bold text-gray-800">阳东消防</h1>
-                            <p class="text-sm text-gray-500 mt-1">智能考核系统</p>
+                            <h1 class="text-xl font-bold text-gray-800">阳东消防</h1>
+                            <p class="text-xs text-gray-500">考核管理系统</p>
                         </div>
                     </div>
                 </div>
                 
                 <!-- 用户信息 -->
-                <div class="p-6 border-b border-white/20">
+                <div class="p-4 border-b">
                     <div class="flex items-center">
-                        <div class="h-16 w-16 rounded-2xl gradient-bg flex items-center justify-center mr-4">
-                            <i class="fa fa-user text-white text-2xl"></i>
+                        <div class="h-12 w-12 rounded-full gradient-bg flex items-center justify-center mr-3">
+                            <i class="fa fa-user text-white text-lg"></i>
                         </div>
                         <div class="flex-1 min-w-0">
-                            <p class="text-lg font-semibold text-gray-800 truncate" id="desktop-user-name">消防员</p>
-                            <p class="text-sm text-gray-500 truncate mt-1" id="desktop-user-role">消防员</p>
-                            <p class="text-xs text-gray-400 truncate mt-1" id="desktop-user-dept">阳东大队</p>
+                            <p class="text-sm font-medium text-gray-800 truncate" id="desktop-user-name">消防员</p>
+                            <p class="text-xs text-gray-500 truncate" id="desktop-user-role">消防员</p>
+                            <p class="text-xs text-gray-400 truncate" id="desktop-user-dept">阳东大队</p>
                         </div>
-                        <button class="text-gray-400 hover:text-gray-600 transition-colors">
+                        <button class="text-gray-400 hover:text-gray-600">
                             <i class="fa fa-chevron-down"></i>
                         </button>
                     </div>
                 </div>
                 
                 <!-- 导航菜单 -->
-                <nav class="flex-1 overflow-y-auto p-6 space-y-1" id="desktop-nav-menu">
+                <nav class="flex-1 overflow-y-auto p-4" id="desktop-nav-menu">
                     <!-- 动态生成 -->
                 </nav>
                 
                 <!-- 系统状态 -->
-                <div class="p-6 border-t border-white/20">
-                    <div class="flex items-center justify-between">
-                        <div class="flex items-center text-green-600 font-medium">
-                            <div class="h-3 w-3 rounded-full bg-green-500 mr-3 animate-pulse"></div>
+                <div class="p-4 border-t">
+                    <div class="flex items-center justify-between text-sm">
+                        <div class="flex items-center text-green-600">
+                            <i class="fa fa-circle text-xs mr-2"></i>
                             <span>系统在线</span>
                         </div>
-                        <span class="text-xs text-gray-400 font-medium" id="last-sync">刚刚同步</span>
+                        <span class="text-gray-400 text-xs" id="last-sync">刚刚同步</span>
                     </div>
                 </div>
             </aside>
@@ -764,84 +511,63 @@
             <!-- 主内容区 -->
             <main class="flex-1 overflow-hidden flex flex-col">
                 <!-- 顶部导航栏 -->
-                <header class="glass-card border-b border-white/20">
-                    <div class="px-8 py-5">
+                <header class="glass-card border-b border-gray-200/50">
+                    <div class="px-6 py-4">
                         <div class="flex items-center justify-between">
-                            <div class="flex items-center space-x-6">
+                            <div class="flex items-center space-x-4">
                                 <!-- 返回按钮 -->
                                 <div id="back-button-container" class="hidden">
-                                    <button onclick="goBack()" 
-                                        class="flex items-center text-gray-600 hover:text-primary transition-colors px-4 py-2 rounded-xl hover:bg-gray-100/50">
-                                        <i class="fa fa-arrow-left mr-3"></i>
-                                        <span class="font-medium">返回</span>
+                                    <button onclick="goBack()" class="flex items-center text-gray-600 hover:text-gray-900 transition-colors">
+                                        <i class="fa fa-arrow-left mr-2"></i>
+                                        返回
                                     </button>
                                 </div>
                                 
-                                <h1 class="text-2xl font-bold text-gray-800" id="page-title">仪表盘</h1>
+                                <h1 class="text-xl font-bold text-gray-800" id="page-title">仪表盘</h1>
                                 
-                                <div class="hidden lg:flex items-center space-x-3">
-                                    <span class="px-4 py-2 bg-gradient-to-r from-primary/10 to-primary/5 text-primary rounded-xl font-medium">
-                                        <i class="fa fa-shield mr-2"></i>内部系统
-                                    </span>
-                                    <span class="px-4 py-2 bg-gradient-to-r from-green-100 to-emerald-100 text-green-800 rounded-xl font-medium" id="network-indicator">
-                                        <i class="fa fa-wifi mr-2"></i>在线状态
+                                <div class="hidden lg:flex items-center space-x-2 text-sm">
+                                    <span class="px-3 py-1 bg-primary/10 text-primary rounded-full">内部使用</span>
+                                    <span class="px-3 py-1 bg-green-100 text-green-800 rounded-full" id="network-indicator">
+                                        <i class="fa fa-wifi mr-1"></i>在线
                                     </span>
                                 </div>
                             </div>
                             
-                            <div class="flex items-center space-x-6">
+                            <div class="flex items-center space-x-4">
                                 <!-- 一键导出按钮 -->
                                 <div id="export-button-container" class="hidden">
-                                    <button onclick="exportRankings()" 
-                                        class="btn-primary px-6 py-3 rounded-xl font-medium">
-                                        <i class="fa fa-download mr-3"></i>导出排名
+                                    <button onclick="exportRankings()" class="btn-primary text-sm px-4 py-2 rounded-xl">
+                                        <i class="fa fa-download mr-2"></i>导出排名
                                     </button>
                                 </div>
                                 
                                 <!-- 通知 -->
-                                <button class="relative text-gray-700 hover:text-primary transition-colors group">
-                                    <i class="fa fa-bell text-2xl"></i>
-                                    <span class="absolute -top-2 -right-2 h-4 w-4 bg-gradient-to-br from-secondary to-secondary-light rounded-full border-2 border-white text-xs flex items-center justify-center text-white">
-                                        3
-                                    </span>
-                                    <div class="absolute top-full right-0 mt-3 w-80 dropdown-menu hidden group-hover:block">
-                                        <div class="p-4 border-b border-gray-200/50">
-                                            <h3 class="font-semibold text-gray-800">系统通知</h3>
-                                        </div>
-                                        <div class="max-h-80 overflow-y-auto">
-                                            <div class="p-4 hover:bg-gray-100/50 transition-colors border-b border-gray-200/50">
-                                                <p class="text-sm font-medium text-gray-800">新考核任务发布</p>
-                                                <p class="text-xs text-gray-500 mt-1">12月体能考核即将开始</p>
-                                            </div>
-                                        </div>
-                                    </div>
+                                <button class="relative text-gray-600 hover:text-gray-900 transition-colors">
+                                    <i class="fa fa-bell text-lg"></i>
+                                    <span class="absolute -top-1 -right-1 h-2 w-2 bg-secondary rounded-full"></span>
                                 </button>
                                 
                                 <!-- 用户菜单 -->
                                 <div class="relative group">
-                                    <button class="flex items-center space-x-3">
-                                        <div class="h-12 w-12 rounded-2xl gradient-bg flex items-center justify-center">
-                                            <i class="fa fa-user text-white"></i>
+                                    <button class="flex items-center space-x-2">
+                                        <div class="h-8 w-8 rounded-full gradient-bg flex items-center justify-center">
+                                            <i class="fa fa-user text-white text-sm"></i>
                                         </div>
-                                        <span class="text-base font-semibold text-gray-700 hidden lg:inline" id="header-user-name">消防员</span>
-                                        <i class="fa fa-chevron-down text-gray-400"></i>
+                                        <span class="text-sm font-medium text-gray-700 hidden lg:inline" id="header-user-name">消防员</span>
+                                        <i class="fa fa-chevron-down text-xs text-gray-400"></i>
                                     </button>
                                     
                                     <!-- 下拉菜单 -->
-                                    <div class="absolute right-0 mt-3 w-56 dropdown-menu hidden group-hover:block">
-                                        <a href="#" class="flex items-center px-5 py-4 text-gray-700 hover:bg-gray-100/50 transition-colors">
-                                            <i class="fa fa-user text-primary mr-4"></i>
-                                            <span>个人资料</span>
+                                    <div class="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-lg py-1 hidden group-hover:block z-50 border border-gray-200">
+                                        <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                            <i class="fa fa-user mr-2"></i>个人资料
                                         </a>
-                                        <a href="#" class="flex items-center px-5 py-4 text-gray-700 hover:bg-gray-100/50 transition-colors">
-                                            <i class="fa fa-cog text-primary mr-4"></i>
-                                            <span>系统设置</span>
+                                        <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                            <i class="fa fa-cog mr-2"></i>系统设置
                                         </a>
-                                        <div class="border-t border-gray-200/50 my-2"></div>
-                                        <button onclick="logout()" 
-                                            class="w-full text-left flex items-center px-5 py-4 text-red-600 hover:bg-red-50/50 transition-colors">
-                                            <i class="fa fa-sign-out mr-4"></i>
-                                            <span class="font-semibold">退出登录</span>
+                                        <div class="border-t my-1"></div>
+                                        <button onclick="logout()" class="w-full text-left block px-4 py-2 text-sm text-red-600 hover:bg-red-50">
+                                            <i class="fa fa-sign-out mr-2"></i>退出登录
                                         </button>
                                     </div>
                                 </div>
@@ -851,59 +577,47 @@
                 </header>
 
                 <!-- 内容区域 -->
-                <div class="flex-1 overflow-y-auto p-6 md:p-8" id="page-content">
+                <div class="flex-1 overflow-y-auto p-4 md:p-6" id="page-content">
                     <!-- 动态加载内容 -->
                 </div>
             </main>
         </div>
 
         <!-- 移动端底部导航 -->
-        <div class="md:hidden fixed bottom-0 left-0 right-0 glass-card border-t border-white/20 z-40">
-            <div class="flex justify-around py-4">
-                <button data-page="dashboard" 
-                    class="mobile-nav-btn flex flex-col items-center text-primary">
-                    <div class="h-12 w-12 rounded-2xl bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center mb-2">
-                        <i class="fa fa-home text-xl"></i>
-                    </div>
-                    <span class="text-xs font-semibold">首页</span>
+        <div class="md:hidden fixed bottom-0 left-0 right-0 glass-card border-t z-40">
+            <div class="flex justify-around py-3">
+                <button data-page="dashboard" class="mobile-nav-btn flex flex-col items-center text-primary">
+                    <i class="fa fa-home text-xl mb-1"></i>
+                    <span class="text-xs">首页</span>
                 </button>
-                <button data-page="my-scores" 
-                    class="mobile-nav-btn flex flex-col items-center text-gray-500">
-                    <div class="h-12 w-12 rounded-2xl bg-gray-100 flex items-center justify-center mb-2">
-                        <i class="fa fa-chart-line text-xl"></i>
-                    </div>
-                    <span class="text-xs font-semibold">成绩</span>
+                <button data-page="my-scores" class="mobile-nav-btn flex flex-col items-center text-gray-500">
+                    <i class="fa fa-chart-line text-xl mb-1"></i>
+                    <span class="text-xs">我的成绩</span>
                 </button>
-                <button data-page="rankings" 
-                    class="mobile-nav-btn flex flex-col items-center text-gray-500">
-                    <div class="h-12 w-12 rounded-2xl bg-gray-100 flex items-center justify-center mb-2">
-                        <i class="fa fa-trophy text-xl"></i>
-                    </div>
-                    <span class="text-xs font-semibold">排名</span>
+                <button data-page="rankings" class="mobile-nav-btn flex flex-col items-center text-gray-500">
+                    <i class="fa fa-trophy text-xl mb-1"></i>
+                    <span class="text-xs">排名</span>
                 </button>
-                <button data-page="profile" 
-                    class="mobile-nav-btn flex flex-col items-center text-gray-500">
-                    <div class="h-12 w-12 rounded-2xl bg-gray-100 flex items-center justify-center mb-2">
-                        <i class="fa fa-user text-xl"></i>
-                    </div>
-                    <span class="text-xs font-semibold">我的</span>
+                <button data-page="profile" class="mobile-nav-btn flex flex-col items-center text-gray-500">
+                    <i class="fa fa-user text-xl mb-1"></i>
+                    <span class="text-xs">我的</span>
                 </button>
             </div>
         </div>
     </div>
 
     <!-- 通知组件 -->
-    <div id="notification" class="fixed top-6 right-6 z-50 transform translate-x-full transition-transform duration-500">
-        <div class="notification">
+    <div id="notification" class="fixed top-4 right-4 z-50 transform translate-x-full transition-transform duration-300">
+        <div class="bg-white rounded-xl shadow-lg p-4 max-w-sm border-l-4 border-success">
             <div class="flex items-start">
-                <div class="flex-shrink-0 text-success text-2xl mr-4">
-                    <i class="fa fa-check-circle"></i>
+                <div class="flex-shrink-0 text-success">
+                    <i class="fa fa-check-circle fa-lg"></i>
                 </div>
-                <div class="flex-1">
-                    <p class="text-lg font-semibold text-gray-900" id="notification-title"></p>
-                    <p class="mt-2 text-gray-600" id="notification-message"></p>
+                <div class="ml-3 flex-1">
+                    <p class="text-sm font-medium text-gray-900" id="notification-title"></p>
+                    <p class="mt-1 text-sm text-gray-500" id="notification-message"></p>
                 </div>
-                <button class="close-notification ml-4 flex-shrink-0 text-gray-400 hover:text-gray-600 transition-colors">
+                <button class="close-notification ml-4 flex-shrink-0 text-gray-400 hover:text-gray-500">
                     <i class="fa fa-times"></i>
                 </button>
             </div>
@@ -911,159 +625,77 @@
     </div>
 
     <!-- 加载遮罩 -->
-    <div id="loading-overlay" class="fixed inset-0 bg-black/60 flex items-center justify-center z-50 hidden backdrop-blur-sm">
-        <div class="glass-card p-8 rounded-3xl">
+    <div id="loading-overlay" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-xl p-6 shadow-2xl">
             <div class="flex items-center">
-                <div class="h-12 w-12 rounded-full border-4 border-primary border-t-transparent animate-spin mr-6"></div>
-                <div>
-                    <p class="text-xl font-semibold text-gray-800">加载中</p>
-                    <p class="text-gray-500 mt-1" id="loading-message">请稍候...</p>
-                </div>
+                <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mr-3"></div>
+                <span class="text-gray-700">加载中...</span>
             </div>
         </div>
     </div>
 
-    <!-- 骨架屏模板 -->
+    <!-- 骨架屏 -->
     <template id="skeleton-template">
-        <div class="space-y-8 p-6">
-            <div class="h-10 w-64 skeleton rounded-xl"></div>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                <div class="h-36 skeleton rounded-2xl"></div>
-                <div class="h-36 skeleton rounded-2xl"></div>
-                <div class="h-36 skeleton rounded-2xl"></div>
-                <div class="h-36 skeleton rounded-2xl"></div>
+        <div class="space-y-4 p-4">
+            <div class="h-8 w-48 skeleton rounded-lg"></div>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="h-32 skeleton rounded-xl"></div>
+                <div class="h-32 skeleton rounded-xl"></div>
+                <div class="h-32 skeleton rounded-xl"></div>
+                <div class="h-32 skeleton rounded-xl"></div>
             </div>
-            <div class="h-80 skeleton rounded-2xl"></div>
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <div class="h-96 skeleton rounded-2xl"></div>
-                <div class="h-96 skeleton rounded-2xl"></div>
-            </div>
+            <div class="h-64 skeleton rounded-xl"></div>
         </div>
     </template>
 
-<script>
-        // ==================== 全局配置 ====================
+    <script>
+        // ==================== 全局变量和配置 ====================
         const APP_CONFIG = {
             appName: '阳东消防考核管理系统',
-            version: '3.0.0',
+            version: '2.0.0',
             defaultUsers: {
-                admin: { 
-                    username: 'admin', 
-                    password: 'admin123', 
-                    name: '系统管理员', 
-                    role: 'admin',
-                    avatar: 'fa-user-shield'
-                },
-                manager: { 
-                    username: 'manager', 
-                    password: 'manager123', 
-                    name: '部门管理员', 
-                    role: 'manager',
-                    avatar: 'fa-user-tie'
-                },
-                firefighter: { 
-                    username: 'FD001', 
-                    password: '123456', 
-                    name: '郑金秀', 
-                    role: 'firefighter',
-                    avatar: 'fa-user',
-                    department: '阳东大队'
-                }
+                admin: { username: 'admin', password: 'admin123', name: '系统管理员', role: 'admin' },
+                manager: { username: 'manager', password: 'manager123', name: '部门管理员', role: 'manager' },
+                firefighter: { username: 'FD001', password: '123456', name: '郑金秀', role: 'firefighter' }
             },
-            departments: [
-                { name: '阳东大队', color: 'from-primary to-primary-light' },
-                { name: '特勤一中队', color: 'from-secondary to-secondary-light' },
-                { name: '特勤二中队', color: 'from-success to-emerald-400' },
-                { name: '战勤保障大队', color: 'from-warning to-amber-400' },
-                { name: '消防训练基地', color: 'from-purple-500 to-purple-400' }
-            ],
+            departments: ['阳东大队', '特勤一中队', '特勤二中队', '战勤保障大队', '消防训练基地'],
             assessmentItems: [
-                { 
-                    id: 'ITEM_001', 
-                    name: '3000米跑', 
-                    type: '体能', 
-                    unit: '分:秒', 
-                    maxScore: 100, 
-                    active: true,
-                    icon: 'fa-running'
-                },
-                { 
-                    id: 'ITEM_002', 
-                    name: '100米负重跑', 
-                    type: '体能', 
-                    unit: '秒', 
-                    maxScore: 100, 
-                    active: true,
-                    icon: 'fa-weight-hanging'
-                },
-                { 
-                    id: 'ITEM_003', 
-                    name: '单杠引体向上', 
-                    type: '体能', 
-                    unit: '次', 
-                    maxScore: 100, 
-                    active: true,
-                    icon: 'fa-dumbbell'
-                },
-                { 
-                    id: 'ITEM_004', 
-                    name: '双杠臂屈伸', 
-                    type: '体能', 
-                    unit: '次', 
-                    maxScore: 100, 
-                    active: true,
-                    icon: 'fa-hands'
-                },
-                { 
-                    id: 'ITEM_005', 
-                    name: '水带铺设', 
-                    type: '技能', 
-                    unit: '秒', 
-                    maxScore: 100, 
-                    active: true,
-                    icon: 'fa-faucet'
-                },
-                { 
-                    id: 'ITEM_006', 
-                    name: '灭火器操作', 
-                    type: '技能', 
-                    unit: '分', 
-                    maxScore: 100, 
-                    active: true,
-                    icon: 'fa-fire-extinguisher'
-                },
-                { 
-                    id: 'ITEM_007', 
-                    name: '理论知识', 
-                    type: '理论', 
-                    unit: '分', 
-                    maxScore: 100, 
-                    active: true,
-                    icon: 'fa-book'
-                }
+                { id: 'ITEM_001', name: '3000米跑', type: '体能', unit: '分:秒', maxScore: 100, active: true },
+                { id: 'ITEM_002', name: '100米负重跑', type: '体能', unit: '秒', maxScore: 100, active: true },
+                { id: 'ITEM_003', name: '单杠引体向上', type: '体能', unit: '次', maxScore: 100, active: true },
+                { id: 'ITEM_004', name: '双杠臂屈伸', type: '体能', unit: '次', maxScore: 100, active: true },
+                { id: 'ITEM_005', name: '水带铺设', type: '技能', unit: '秒', maxScore: 100, active: true },
+                { id: 'ITEM_006', name: '灭火器操作', type: '技能', unit: '分', maxScore: 100, active: true },
+                { id: 'ITEM_007', name: '理论知识', type: '理论', unit: '分', maxScore: 100, active: true }
             ]
         };
 
-        // 当前状态
+        // 当前用户状态
         let currentUser = null;
         let currentPage = 'dashboard';
         let pageHistory = [];
-        let currentPageData = null;
 
         // ==================== 初始化函数 ====================
         document.addEventListener('DOMContentLoaded', function() {
+            // 初始化事件监听
             initEventListeners();
+            
+            // 检查记住的登录信息
             checkRememberedLogin();
+            
+            // 监控网络状态
             monitorNetwork();
+            
+            // 显示登录页面
             document.getElementById('login-page').classList.remove('hidden');
+            
+            // 加载模拟数据到本地存储
             initMockData();
-            updateDateTime();
-            setInterval(updateDateTime, 60000); // 每分钟更新时间
         });
 
         // ==================== 事件监听器 ====================
         function initEventListeners() {
-            // 登录表单
+            // 登录表单提交
             document.getElementById('login-form').addEventListener('submit', function(e) {
                 e.preventDefault();
                 handleLogin();
@@ -1090,77 +722,49 @@
                 btn.addEventListener('click', function() {
                     const page = this.dataset.page;
                     navigateTo(page);
-                    updateMobileNav(this);
+                    
+                    // 更新按钮状态
+                    document.querySelectorAll('.mobile-nav-btn').forEach(b => {
+                        b.classList.remove('text-primary');
+                        b.classList.add('text-gray-500');
+                    });
+                    this.classList.remove('text-gray-500');
+                    this.classList.add('text-primary');
                 });
             });
             
             // 通知关闭
             document.querySelector('.close-notification')?.addEventListener('click', hideNotification);
             
-            // 全局点击
+            // 全局点击事件
             document.addEventListener('click', function(e) {
+                // 页面导航
                 if (e.target.matches('[data-page]') || e.target.closest('[data-page]')) {
                     const page = e.target.dataset.page || e.target.closest('[data-page]').dataset.page;
                     navigateTo(page);
+                    
+                    // 关闭移动端菜单
                     document.getElementById('mobile-sidebar').classList.add('-translate-x-full');
                 }
             });
-            
-            // 记住我复选框
-            document.getElementById('remember-me').addEventListener('change', function(e) {
-                const checkIcon = this.parentElement.querySelector('.fa-check');
-                if (this.checked) {
-                    checkIcon.classList.remove('opacity-0');
-                } else {
-                    checkIcon.classList.add('opacity-0');
-                }
-            });
         }
 
-        function updateMobileNav(activeBtn) {
-            document.querySelectorAll('.mobile-nav-btn').forEach(btn => {
-                const iconDiv = btn.querySelector('div');
-                btn.classList.remove('text-primary');
-                btn.classList.add('text-gray-500');
-                iconDiv.classList.remove('from-primary/20', 'to-primary/10');
-                iconDiv.classList.add('bg-gray-100');
-            });
-            
-            activeBtn.classList.remove('text-gray-500');
-            activeBtn.classList.add('text-primary');
-            const activeIconDiv = activeBtn.querySelector('div');
-            activeIconDiv.classList.remove('bg-gray-100');
-            activeIconDiv.classList.add('bg-gradient-to-br', 'from-primary/20', 'to-primary/10');
-        }
-
-        // ==================== 登录函数 ====================
+        // ==================== 登录相关函数 ====================
         function selectRole(role) {
-            document.querySelectorAll('.role-btn').forEach(btn => {
-                btn.classList.remove('border-primary', 'border-secondary', 'border-warning');
-                btn.classList.add('border-gray-200/50');
-            });
-            
-            const selectedBtn = document.querySelector(`[data-role="${role}"]`);
-            let borderColor = 'border-primary';
-            if (role === 'manager') borderColor = 'border-secondary';
-            if (role === 'admin') borderColor = 'border-warning';
-            
-            selectedBtn.classList.remove('border-gray-200/50');
-            selectedBtn.classList.add(borderColor);
-            
+            // 根据角色预填账号
             const usernameInput = document.getElementById('username');
             switch(role) {
                 case 'firefighter':
                     usernameInput.value = 'FD001';
-                    usernameInput.placeholder = '请输入消防员编号';
+                    usernameInput.placeholder = '消防员编号';
                     break;
                 case 'manager':
                     usernameInput.value = 'manager';
-                    usernameInput.placeholder = '请输入管理员账号';
+                    usernameInput.placeholder = '管理员账号';
                     break;
                 case 'admin':
                     usernameInput.value = 'admin';
-                    usernameInput.placeholder = '请输入超级管理员账号';
+                    usernameInput.placeholder = '超级管理员账号';
                     break;
             }
         }
@@ -1169,26 +773,36 @@
             const username = document.getElementById('username').value.trim();
             const password = document.getElementById('password').value;
             const rememberMe = document.getElementById('remember-me').checked;
-            const selectedRole = document.querySelector('.role-btn.active')?.dataset.role;
             
             if (!username || !password) {
                 showNotification('登录失败', '请输入账号和密码', 'error');
                 return;
             }
             
-            if (!selectedRole) {
-                showNotification('登录失败', '请选择登录身份', 'error');
+            // 根据用户名自动判断角色
+            let selectedRole = null;
+            if (username.startsWith('FD')) {
+                selectedRole = 'firefighter';
+            } else if (username === 'admin') {
+                selectedRole = 'admin';
+            } else if (username === 'manager') {
+                selectedRole = 'manager';
+            } else {
+                showNotification('登录失败', '未知账号类型，请联系管理员', 'error');
                 return;
             }
             
-            showLoading('正在验证身份...');
+            // 显示加载中
+            showLoading();
             
             try {
-                await new Promise(resolve => setTimeout(resolve, 800));
+                // 模拟网络延迟
+                await new Promise(resolve => setTimeout(resolve, 500));
                 
+                // 验证用户
                 let user = null;
                 
-                // 管理员验证
+                // 管理员和超级管理员验证
                 if (selectedRole === 'admin' || selectedRole === 'manager') {
                     const defaultUser = APP_CONFIG.defaultUsers[selectedRole];
                     if (defaultUser && username === defaultUser.username && password === defaultUser.password) {
@@ -1197,29 +811,30 @@
                 }
                 // 消防员验证
                 else if (selectedRole === 'firefighter') {
+                    // 从本地存储获取消防员数据
                     const firefighters = JSON.parse(localStorage.getItem('firefighters') || '[]');
-                    const firefighter = firefighters.find(f => f.id === username && f.idCard?.slice(-6) === password);
+                    const firefighter = firefighters.find(f => f.id === username && f.id === password);
                     
                     if (firefighter) {
                         user = {
                             username: firefighter.id,
-                            password: firefighter.idCard.slice(-6),
+                            password: firefighter.id,
                             name: firefighter.name,
                             role: 'firefighter',
                             department: firefighter.department,
-                            avatar: 'fa-user'
+                            idCard: firefighter.idCard
                         };
                     }
                     
-                    // 演示账号
+                    // 如果没有找到，检查预设的演示账号
                     const demoFirefighter = APP_CONFIG.defaultUsers.firefighter;
-                    if (!user && demoFirefighter && username === demoFirefighter.username && password === demoFirefighter.password) {
-                        user = { ...demoFirefighter };
+                    if (!user && demoFirefighter && username === demoFirefighter.username && password === username) {
+                        user = { ...demoFirefighter, password: username };
                     }
                 }
                 
                 if (user) {
-                    // 记住登录
+                    // 记住登录信息
                     if (rememberMe) {
                         localStorage.setItem('remembered_login', JSON.stringify({
                             username: user.username,
@@ -1229,16 +844,26 @@
                         }));
                     }
                     
+                    // 设置当前用户
                     currentUser = user;
+                    
+                    // 更新UI
                     updateUserUI();
+                    
+                    // 导航到首页
                     navigateTo('dashboard');
                     
+                    // 切换页面
                     document.getElementById('login-page').classList.add('hidden');
                     document.getElementById('app-container').classList.remove('hidden');
                     
                     showNotification('登录成功', `欢迎回来，${user.name}！`);
                 } else {
-                    showNotification('登录失败', '账号或密码错误，请重试', 'error');
+                    if (selectedRole === 'firefighter') {
+                        showNotification('登录失败', '编号或身份证后六位错误，或您尚未被录入系统', 'error');
+                    } else {
+                        showNotification('登录失败', '账号或密码错误', 'error');
+                    }
                 }
             } catch (error) {
                 showNotification('登录失败', '网络错误，请检查连接', 'error');
@@ -1255,25 +880,16 @@
                     document.getElementById('username').value = loginData.username || '';
                     document.getElementById('password').value = loginData.password || '';
                     document.getElementById('remember-me').checked = true;
-                    
-                    // 触发复选框样式更新
-                    document.getElementById('remember-me').dispatchEvent(new Event('change'));
-                    
-                    if (loginData.username.startsWith('FD')) {
-                        selectRole('firefighter');
-                    } else if (loginData.username.includes('admin')) {
-                        selectRole('admin');
-                    } else {
-                        selectRole('manager');
-                    }
                 } catch (error) {
+                    // 清除无效的记住登录数据
                     localStorage.removeItem('remembered_login');
                 }
             }
         }
 
-        // ==================== 页面导航 ====================
+        // ==================== 页面导航函数 ====================
         function navigateTo(page, data = null) {
+            // 记录历史
             if (currentPage && currentPage !== page) {
                 pageHistory.push({
                     page: currentPage,
@@ -1284,16 +900,17 @@
             currentPage = page;
             currentPageData = data;
             
+            // 更新页面标题
             updatePageTitle(page);
-            updateBackButton();
-            updateExportButton(page);
-            loadPage(page, data);
             
-            // 更新移动端导航
-            const mobileBtn = document.querySelector(`.mobile-nav-btn[data-page="${page}"]`);
-            if (mobileBtn) {
-                updateMobileNav(mobileBtn);
-            }
+            // 显示/隐藏返回按钮
+            updateBackButton();
+            
+            // 显示/隐藏导出按钮
+            updateExportButton(page);
+            
+            // 加载页面内容
+            loadPage(page, data);
         }
 
         function goBack() {
@@ -1323,12 +940,21 @@
 
         function updateBackButton() {
             const container = document.getElementById('back-button-container');
-            container.classList.toggle('hidden', pageHistory.length === 0);
+            if (pageHistory.length > 0) {
+                container.classList.remove('hidden');
+            } else {
+                container.classList.add('hidden');
+            }
         }
 
         function updateExportButton(page) {
             const container = document.getElementById('export-button-container');
-            container.classList.toggle('hidden', page !== 'rankings');
+            // 在排名页面显示导出按钮
+            if (page === 'rankings') {
+                container.classList.remove('hidden');
+            } else {
+                container.classList.add('hidden');
+            }
         }
 
         function updateUserUI() {
@@ -1336,19 +962,19 @@
             
             const user = currentUser;
             
-            // 更新用户名
+            // 更新用户名显示
             ['mobile', 'desktop', 'header'].forEach(type => {
                 const element = document.getElementById(`${type}-user-name`);
                 if (element) element.textContent = user.name;
             });
             
-            // 更新角色
+            // 更新角色显示
             ['mobile', 'desktop'].forEach(type => {
                 const element = document.getElementById(`${type}-user-role`);
                 if (element) element.textContent = getRoleName(user.role);
             });
             
-            // 更新部门
+            // 更新部门显示
             const deptElement = document.getElementById('desktop-user-dept');
             if (deptElement) deptElement.textContent = user.department || '阳东大队';
             
@@ -1368,26 +994,26 @@
         function renderMenu(role) {
             const menuItems = {
                 admin: [
-                    { id: 'dashboard', name: '仪表盘', icon: 'fa-home', color: 'text-primary' },
-                    { id: 'personnel', name: '人员管理', icon: 'fa-users', color: 'text-blue-500' },
-                    { id: 'assessments', name: '考核管理', icon: 'fa-clipboard-check', color: 'text-green-500' },
-                    { id: 'rankings', name: '成绩排名', icon: 'fa-trophy', color: 'text-yellow-500' },
-                    { id: 'data-board', name: '数据看板', icon: 'fa-chart-pie', color: 'text-purple-500' },
-                    { id: 'user-management', name: '用户管理', icon: 'fa-user-cog', color: 'text-indigo-500' },
-                    { id: 'settings', name: '系统设置', icon: 'fa-cog', color: 'text-gray-500' }
+                    { id: 'dashboard', name: '仪表盘', icon: 'fa-home' },
+                    { id: 'personnel', name: '人员管理', icon: 'fa-users' },
+                    { id: 'assessments', name: '考核管理', icon: 'fa-clipboard-check' },
+                    { id: 'rankings', name: '成绩排名', icon: 'fa-trophy' },
+                    { id: 'data-board', name: '数据看板', icon: 'fa-chart-pie' },
+                    { id: 'user-management', name: '用户管理', icon: 'fa-user-cog' },
+                    { id: 'settings', name: '系统设置', icon: 'fa-cog' }
                 ],
                 manager: [
-                    { id: 'dashboard', name: '仪表盘', icon: 'fa-home', color: 'text-primary' },
-                    { id: 'personnel', name: '人员管理', icon: 'fa-users', color: 'text-blue-500' },
-                    { id: 'assessments', name: '考核管理', icon: 'fa-clipboard-check', color: 'text-green-500' },
-                    { id: 'rankings', name: '成绩排名', icon: 'fa-trophy', color: 'text-yellow-500' },
-                    { id: 'data-board', name: '数据看板', icon: 'fa-chart-pie', color: 'text-purple-500' }
+                    { id: 'dashboard', name: '仪表盘', icon: 'fa-home' },
+                    { id: 'personnel', name: '人员管理', icon: 'fa-users' },
+                    { id: 'assessments', name: '考核管理', icon: 'fa-clipboard-check' },
+                    { id: 'rankings', name: '成绩排名', icon: 'fa-trophy' },
+                    { id: 'data-board', name: '数据看板', icon: 'fa-chart-pie' }
                 ],
                 firefighter: [
-                    { id: 'dashboard', name: '首页', icon: 'fa-home', color: 'text-primary' },
-                    { id: 'my-scores', name: '我的成绩', icon: 'fa-chart-line', color: 'text-green-500' },
-                    { id: 'rankings', name: '成绩排名', icon: 'fa-trophy', color: 'text-yellow-500' },
-                    { id: 'profile', name: '个人中心', icon: 'fa-user', color: 'text-blue-500' }
+                    { id: 'dashboard', name: '首页', icon: 'fa-home' },
+                    { id: 'my-scores', name: '我的成绩', icon: 'fa-chart-line' },
+                    { id: 'rankings', name: '成绩排名', icon: 'fa-trophy' },
+                    { id: 'profile', name: '个人中心', icon: 'fa-user' }
                 ]
             };
             
@@ -1397,11 +1023,9 @@
             const desktopMenu = document.getElementById('desktop-nav-menu');
             if (desktopMenu) {
                 desktopMenu.innerHTML = items.map(item => `
-                    <a href="#" data-page="${item.id}" 
-                        class="menu-item flex items-center px-5 py-4 text-gray-700 hover:bg-gray-100/50 rounded-2xl mb-2 transition-all duration-300 hover:translate-x-2">
-                        <i class="fa ${item.icon} ${item.color} text-xl mr-4"></i>
-                        <span class="font-medium">${item.name}</span>
-                        <i class="fa fa-chevron-right ml-auto text-gray-300 text-sm"></i>
+                    <a href="#" data-page="${item.id}" class="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-xl mb-2 transition-colors hover:text-primary">
+                        <i class="fa ${item.icon} mr-3 text-lg"></i>
+                        <span>${item.name}</span>
                     </a>
                 `).join('');
             }
@@ -1410,64 +1034,60 @@
             const mobileMenu = document.getElementById('mobile-nav-menu');
             if (mobileMenu) {
                 mobileMenu.innerHTML = items.map(item => `
-                    <a href="#" data-page="${item.id}" 
-                        class="flex items-center px-5 py-4 text-gray-700 hover:bg-gray-100/50 rounded-2xl mb-2 transition-colors">
-                        <i class="fa ${item.icon} ${item.color} text-xl mr-4"></i>
-                        <span class="font-medium">${item.name}</span>
+                    <a href="#" data-page="${item.id}" class="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-100">
+                        <i class="fa ${item.icon} mr-3 text-lg"></i>
+                        <span>${item.name}</span>
                     </a>
                 `).join('');
             }
         }
 
-// ==================== 页面加载函数 ====================
+        // ==================== 页面加载函数 ====================
         async function loadPage(page, data = null) {
             const content = document.getElementById('page-content');
+            
+            // 显示骨架屏
             showSkeleton(content);
             
+            // 根据页面加载内容
             let html = '';
-            try {
-                switch(page) {
-                    case 'dashboard':
-                        html = await loadDashboard();
-                        break;
-                    case 'my-scores':
-                        html = await loadMyScores();
-                        break;
-                    case 'rankings':
-                        html = await loadRankings();
-                        break;
-                    case 'personnel':
-                        html = await loadPersonnelManagement();
-                        break;
-                    case 'assessments':
-                        html = await loadAssessmentManagement();
-                        break;
-                    case 'settings':
-                        html = await loadSystemSettings();
-                        break;
-                    default:
-                        html = await loadDashboard();
-                }
-                
-                content.innerHTML = html;
-                initPageComponents(page);
-            } catch (error) {
-                content.innerHTML = `
-                    <div class="flex flex-col items-center justify-center h-full p-8">
-                        <div class="h-24 w-24 rounded-full bg-red-100 flex items-center justify-center mb-6">
-                            <i class="fa fa-exclamation-triangle text-red-500 text-3xl"></i>
-                        </div>
-                        <h2 class="text-2xl font-bold text-gray-800 mb-2">加载失败</h2>
-                        <p class="text-gray-600 mb-6">页面加载时出现错误</p>
-                        <button onclick="navigateTo('dashboard')" 
-                            class="btn-primary px-6 py-3 rounded-xl">
-                            返回首页
-                        </button>
-                    </div>
-                `;
+            
+            switch(page) {
+                case 'dashboard':
+                    html = await loadDashboard();
+                    break;
+                case 'my-scores':
+                    html = await loadMyScores();
+                    break;
+                case 'rankings':
+                    html = await loadRankings();
+                    break;
+                case 'personnel':
+                    html = await loadPersonnelManagement();
+                    break;
+                case 'assessments':
+                    html = await loadAssessmentManagement();
+                    break;
+                case 'settings':
+                    html = await loadSystemSettings();
+                    break;
+                case 'user-management':
+                    html = await loadUserManagement();
+                    break;
+                default:
+                    html = await loadDashboard();
             }
             
-            setTimeout(() => hideSkeleton(content), 300);
+            // 设置内容
+            content.innerHTML = html;
+            
+            // 初始化页面组件
+            initPageComponents(page);
+            
+            // 隐藏骨架屏
+            setTimeout(() => {
+                hideSkeleton(content);
+            }, 300);
         }
 
         async function loadDashboard() {
@@ -1483,108 +1103,133 @@
             const progress = getMyProgress();
             
             return `
-                <div class="space-y-8 animate-fade-in-up">
+                <div class="space-y-6 animate-fade-in">
                     <!-- 欢迎卡片 -->
-                    <div class="gradient-bg rounded-3xl p-8 text-white relative overflow-hidden">
-                        <div class="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2"></div>
-                        <div class="relative z-10">
-                            <div class="flex items-center justify-between mb-8">
-                                <div>
-                                    <h1 class="text-3xl font-bold mb-3">${currentUser.name}，欢迎回来！</h1>
-                                    <p class="opacity-90 text-lg">今日训练目标已完成 85%</p>
-                                </div>
-                                <div class="h-20 w-20 rounded-2xl bg-white/20 flex items-center justify-center backdrop-blur-sm">
-                                    <i class="fa fa-fire text-3xl text-white"></i>
-                                </div>
+                    <div class="gradient-bg rounded-2xl p-6 text-white shadow-xl">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <h1 class="text-2xl font-bold mb-2">${currentUser.name}，欢迎回来！</h1>
+                                <p class="opacity-90">今日训练目标已完成 85%</p>
                             </div>
-                            
-                            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                                <div class="stat-card bg-white/20 backdrop-blur-sm rounded-2xl p-6">
-                                    <p class="text-sm opacity-90 mb-2">本月考核</p>
-                                    <p class="text-3xl font-bold">3次</p>
-                                </div>
-                                <div class="stat-card bg-white/20 backdrop-blur-sm rounded-2xl p-6">
-                                    <p class="text-sm opacity-90 mb-2">平均分</p>
-                                    <p class="text-3xl font-bold">92分</p>
-                                </div>
-                                <div class="stat-card bg-white/20 backdrop-blur-sm rounded-2xl p-6">
-                                    <p class="text-sm opacity-90 mb-2">大队排名</p>
-                                    <p class="text-3xl font-bold">第8名</p>
-                                </div>
-                                <div class="stat-card bg-white/20 backdrop-blur-sm rounded-2xl p-6">
-                                    <p class="text-sm opacity-90 mb-2">进步</p>
-                                    <p class="text-3xl font-bold text-green-300">↑5%</p>
-                                </div>
+                            <div class="h-16 w-16 rounded-full bg-white/20 flex items-center justify-center">
+                                <i class="fa fa-fire text-2xl"></i>
+                            </div>
+                        </div>
+                        <div class="mt-6 grid grid-cols-2 md:grid-cols-4 gap-4">
+                            <div class="bg-white/20 p-4 rounded-xl backdrop-blur-sm">
+                                <p class="text-sm opacity-90">本月考核</p>
+                                <p class="text-2xl font-bold mt-1">3次</p>
+                            </div>
+                            <div class="bg-white/20 p-4 rounded-xl backdrop-blur-sm">
+                                <p class="text-sm opacity-90">平均分</p>
+                                <p class="text-2xl font-bold mt-1">92分</p>
+                            </div>
+                            <div class="bg-white/20 p-4 rounded-xl backdrop-blur-sm">
+                                <p class="text-sm opacity-90">大队排名</p>
+                                <p class="text-2xl font-bold mt-1">第8名</p>
+                            </div>
+                            <div class="bg-white/20 p-4 rounded-xl backdrop-blur-sm">
+                                <p class="text-sm opacity-90">进步</p>
+                                <p class="text-2xl font-bold mt-1 text-green-300">↑5%</p>
                             </div>
                         </div>
                     </div>
                     
                     <!-- 快速入口 -->
-                    <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
-                        <button onclick="navigateTo('my-scores')" 
-                            class="glass-card p-8 text-center hover-card">
-                            <div class="h-16 w-16 rounded-2xl bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center mx-auto mb-4">
-                                <i class="fa fa-chart-bar text-primary text-2xl"></i>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        <button onclick="navigateTo('my-scores')" class="glass-card rounded-xl p-6 text-center hover:shadow-lg transform hover:-translate-y-1 transition-all duration-300">
+                            <div class="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-3">
+                                <i class="fa fa-chart-bar text-primary text-xl"></i>
                             </div>
-                            <h3 class="text-lg font-semibold text-gray-800 mb-2">我的成绩</h3>
-                            <p class="text-gray-500">查看详细成绩</p>
+                            <h3 class="font-medium text-gray-800">我的成绩</h3>
+                            <p class="text-sm text-gray-500 mt-1">查看详细成绩</p>
                         </button>
                         
-                        <button onclick="showProgressChart()" 
-                            class="glass-card p-8 text-center hover-card">
-                            <div class="h-16 w-16 rounded-2xl bg-gradient-to-br from-secondary/20 to-secondary/10 flex items-center justify-center mx-auto mb-4">
-                                <i class="fa fa-chart-line text-secondary text-2xl"></i>
+                        <button onclick="showProgressChart()" class="glass-card rounded-xl p-6 text-center hover:shadow-lg transform hover:-translate-y-1 transition-all duration-300">
+                            <div class="h-12 w-12 rounded-full bg-secondary/10 flex items-center justify-center mx-auto mb-3">
+                                <i class="fa fa-chart-line text-secondary text-xl"></i>
                             </div>
-                            <h3 class="text-lg font-semibold text-gray-800 mb-2">进步分析</h3>
-                            <p class="text-gray-500">查看进步趋势</p>
+                            <h3 class="font-medium text-gray-800">进步分析</h3>
+                            <p class="text-sm text-gray-500 mt-1">查看进步趋势</p>
                         </button>
                         
-                        <button onclick="navigateTo('rankings')" 
-                            class="glass-card p-8 text-center hover-card">
-                            <div class="h-16 w-16 rounded-2xl bg-gradient-to-br from-success/20 to-success/10 flex items-center justify-center mx-auto mb-4">
-                                <i class="fa fa-trophy text-success text-2xl"></i>
+                        <button onclick="navigateTo('rankings')" class="glass-card rounded-xl p-6 text-center hover:shadow-lg transform hover:-translate-y-1 transition-all duration-300">
+                            <div class="h-12 w-12 rounded-full bg-success/10 flex items-center justify-center mx-auto mb-3">
+                                <i class="fa fa-trophy text-success text-xl"></i>
                             </div>
-                            <h3 class="text-lg font-semibold text-gray-800 mb-2">成绩排名</h3>
-                            <p class="text-gray-500">查看大队排名</p>
+                            <h3 class="font-medium text-gray-800">成绩排名</h3>
+                            <p class="text-sm text-gray-500 mt-1">查看大队排名</p>
                         </button>
                         
-                        <button onclick="showWeaknessAnalysis()" 
-                            class="glass-card p-8 text-center hover-card">
-                            <div class="h-16 w-16 rounded-2xl bg-gradient-to-br from-warning/20 to-warning/10 flex items-center justify-center mx-auto mb-4">
-                                <i class="fa fa-exclamation-triangle text-warning text-2xl"></i>
+                        <button onclick="showWeaknessAnalysis()" class="glass-card rounded-xl p-6 text-center hover:shadow-lg transform hover:-translate-y-1 transition-all duration-300">
+                            <div class="h-12 w-12 rounded-full bg-warning/10 flex items-center justify-center mx-auto mb-3">
+                                <i class="fa fa-exclamation-triangle text-warning text-xl"></i>
                             </div>
-                            <h3 class="text-lg font-semibold text-gray-800 mb-2">弱势项目</h3>
-                            <p class="text-gray-500">针对性训练建议</p>
+                            <h3 class="font-medium text-gray-800">弱势项目</h3>
+                            <p class="text-sm text-gray-500 mt-1">针对性训练建议</p>
                         </button>
                     </div>
                     
                     <!-- 本月考核情况 -->
-                    <div class="glass-card p-8">
-                        <div class="flex items-center justify-between mb-8">
-                            <h2 class="text-2xl font-bold text-gray-800">本月考核情况</h2>
-                            <button onclick="navigateTo('my-scores')" 
-                                class="text-primary font-semibold text-lg flex items-center hover:underline">
-                                查看全部 <i class="fa fa-arrow-right ml-2"></i>
+                    <div class="glass-card rounded-xl p-6">
+                        <div class="flex items-center justify-between mb-6">
+                            <h2 class="text-lg font-bold text-gray-800">本月考核情况</h2>
+                            <button onclick="navigateTo('my-scores')" class="text-primary text-sm font-medium flex items-center">
+                                查看全部 <i class="fa fa-arrow-right ml-1"></i>
                             </button>
                         </div>
-                        
+                        <div class="overflow-x-auto">
+                            <table class="w-full">
+                                <thead>
+                                    <tr class="text-left text-sm text-gray-500 border-b">
+                                        <th class="pb-3">考核项目</th>
+                                        <th class="pb-3">成绩</th>
+                                        <th class="pb-3">得分</th>
+                                        <th class="pb-3">评级</th>
+                                        <th class="pb-3">操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${scores.slice(0, 3).map(score => `
+                                        <tr class="border-b hover:bg-gray-50">
+                                            <td class="py-4 font-medium">${score.item}</td>
+                                            <td class="py-4">${score.result}</td>
+                                            <td class="py-4">
+                                                <span class="font-bold text-primary">${score.score}</span>/100
+                                            </td>
+                                            <td class="py-4">
+                                                <span class="px-3 py-1 ${score.evaluation === '优秀' ? 'bg-green-100 text-green-800' : score.evaluation === '良好' ? 'bg-blue-100 text-blue-800' : 'bg-yellow-100 text-yellow-800'} rounded-full text-sm">
+                                                    ${score.evaluation}
+                                                </span>
+                                            </td>
+                                            <td class="py-4">
+                                                <button class="text-primary text-sm hover:underline">查看详情</button>
+                                            </td>
+                                        </tr>
+                                    `).join('')}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    <!-- 训练建议 -->
+                    <div class="glass-card rounded-xl p-6">
+                        <h2 class="text-lg font-bold text-gray-800 mb-4">针对性训练建议</h2>
                         <div class="space-y-4">
-                            ${scores.slice(0, 3).map(score => `
-                                <div class="flex items-center justify-between p-6 bg-gray-50/50 rounded-2xl hover:bg-gray-100/50 transition-colors">
-                                    <div class="flex items-center">
-                                        <div class="h-12 w-12 rounded-xl bg-gradient-to-br from-primary/10 to-primary/5 flex items-center justify-center mr-4">
-                                            <i class="fa fa-running text-primary"></i>
-                                        </div>
-                                        <div>
-                                            <h3 class="font-semibold text-gray-800">${score.item}</h3>
-                                            <p class="text-sm text-gray-500">${score.date}</p>
+                            ${progress.weaknesses.map(weakness => `
+                                <div class="flex items-start p-4 ${weakness.severity === 'high' ? 'bg-red-50 border-red-100' : 'bg-yellow-50 border-yellow-100'} rounded-lg border">
+                                    <i class="fa ${weakness.severity === 'high' ? 'fa-exclamation-circle text-red-500' : 'fa-lightbulb-o text-yellow-500'} mt-1 mr-3"></i>
+                                    <div class="flex-1">
+                                        <h3 class="font-medium text-gray-800">${weakness.item}</h3>
+                                        <p class="text-sm text-gray-600 mt-1">${weakness.advice}</p>
+                                        <div class="flex items-center mt-2 text-sm text-gray-500">
+                                            <i class="fa fa-clock-o mr-1"></i>
+                                            <span>推荐训练时间：${weakness.schedule}</span>
                                         </div>
                                     </div>
                                     <div class="text-right">
-                                        <div class="text-2xl font-bold text-primary">${score.score}<span class="text-sm text-gray-500">/100</span></div>
-                                        <span class="badge ${score.evaluation === '优秀' ? 'badge-success' : 'badge-warning'}">
-                                            ${score.evaluation}
-                                        </span>
+                                        <div class="text-${weakness.severity === 'high' ? 'red' : 'yellow'}-600 font-bold">${weakness.score}分</div>
+                                        <div class="text-xs text-gray-500">需要加强</div>
                                     </div>
                                 </div>
                             `).join('')}
@@ -1596,116 +1241,111 @@
 
         async function loadAdminDashboard() {
             const stats = getDashboardStats();
+            const assessments = getAssessments();
             
             return `
-                <div class="space-y-8 animate-fade-in-up">
+                <div class="space-y-6 animate-fade-in">
                     <!-- 统计数据 -->
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                         ${stats.map(stat => `
-                            <div class="glass-card p-8 hover-card" onclick="${stat.onclick}">
+                            <div class="glass-card rounded-xl p-6 hover:shadow-lg transform hover:-translate-y-1 transition-all duration-300 cursor-pointer" onclick="${stat.onclick || ''}">
                                 <div class="flex items-center">
-                                    <div class="h-16 w-16 rounded-2xl ${stat.color} flex items-center justify-center mr-5">
-                                        <i class="fa ${stat.icon} text-white text-2xl"></i>
+                                    <div class="h-12 w-12 rounded-full ${stat.color} flex items-center justify-center mr-4">
+                                        <i class="fa ${stat.icon} text-white text-xl"></i>
                                     </div>
                                     <div>
-                                        <p class="text-sm text-gray-500 mb-1">${stat.label}</p>
-                                        <p class="text-3xl font-bold text-gray-800">${stat.value}</p>
-                                        <div class="flex items-center mt-3">
-                                            <i class="fa fa-arrow-${stat.trend > 0 ? 'up text-green-500' : 'down text-red-500'} mr-2"></i>
-                                            <span class="text-sm ${stat.trend > 0 ? 'text-green-600' : 'text-red-600'} font-semibold">
-                                                ${stat.trend > 0 ? '+' : ''}${stat.trend}%
-                                            </span>
-                                        </div>
+                                        <p class="text-sm text-gray-500">${stat.label}</p>
+                                        <p class="text-2xl font-bold text-gray-800">${stat.value}</p>
                                     </div>
+                                </div>
+                                <div class="mt-4 text-sm ${stat.trend > 0 ? 'text-green-600' : 'text-red-600'}">
+                                    <i class="fa fa-arrow-${stat.trend > 0 ? 'up' : 'down'} mr-1"></i>
+                                    ${stat.trend > 0 ? '+' : ''}${stat.trend}%
                                 </div>
                             </div>
                         `).join('')}
                     </div>
                     
                     <!-- 快速操作 -->
-                    <div class="glass-card p-8">
-                        <h2 class="text-2xl font-bold text-gray-800 mb-6">快速操作</h2>
-                        <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
-                            <button onclick="showAddAssessmentModal()" 
-                                class="flex flex-col items-center justify-center p-6 border-3 border-dashed border-gray-300/50 rounded-2xl hover:border-primary hover:bg-primary/5 transition-all duration-300 hover-card">
-                                <i class="fa fa-plus text-primary text-3xl mb-3"></i>
-                                <span class="text-base font-semibold text-gray-700">新增考核</span>
+                    <div class="glass-card rounded-xl p-6">
+                        <h2 class="text-lg font-bold text-gray-800 mb-4">快速操作</h2>
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                            <button onclick="showAddAssessmentModal()" class="flex flex-col items-center justify-center p-4 border-2 border-dashed border-gray-300 rounded-xl hover:border-primary hover:bg-primary/5 transition-all duration-300">
+                                <i class="fa fa-plus text-primary text-2xl mb-2"></i>
+                                <span class="text-sm font-medium text-gray-700">新增考核</span>
                             </button>
-                            
-                            <button onclick="showImportModal()" 
-                                class="flex flex-col items-center justify-center p-6 border-3 border-dashed border-gray-300/50 rounded-2xl hover:border-primary hover:bg-primary/5 transition-all duration-300 hover-card">
-                                <i class="fa fa-upload text-primary text-3xl mb-3"></i>
-                                <span class="text-base font-semibold text-gray-700">导入成绩</span>
+                            <button onclick="showImportModal()" class="flex flex-col items-center justify-center p-4 border-2 border-dashed border-gray-300 rounded-xl hover:border-primary hover:bg-primary/5 transition-all duration-300">
+                                <i class="fa fa-upload text-primary text-2xl mb-2"></i>
+                                <span class="text-sm font-medium text-gray-700">导入成绩</span>
                             </button>
-                            
-                            <button onclick="navigateTo('personnel')" 
-                                class="flex flex-col items-center justify-center p-6 border-3 border-dashed border-gray-300/50 rounded-2xl hover:border-primary hover:bg-primary/5 transition-all duration-300 hover-card">
-                                <i class="fa fa-user-plus text-primary text-3xl mb-3"></i>
-                                <span class="text-base font-semibold text-gray-700">添加人员</span>
+                            <button onclick="navigateTo('personnel')" class="flex flex-col items-center justify-center p-4 border-2 border-dashed border-gray-300 rounded-xl hover:border-primary hover:bg-primary/5 transition-all duration-300">
+                                <i class="fa fa-user-plus text-primary text-2xl mb-2"></i>
+                                <span class="text-sm font-medium text-gray-700">添加人员</span>
                             </button>
-                            
-                            <button onclick="exportDashboardData()" 
-                                class="flex flex-col items-center justify-center p-6 border-3 border-dashed border-gray-300/50 rounded-2xl hover:border-primary hover:bg-primary/5 transition-all duration-300 hover-card">
-                                <i class="fa fa-download text-primary text-3xl mb-3"></i>
-                                <span class="text-base font-semibold text-gray-700">导出数据</span>
+                            <button onclick="exportDashboardData()" class="flex flex-col items-center justify-center p-4 border-2 border-dashed border-gray-300 rounded-xl hover:border-primary hover:bg-primary/5 transition-all duration-300">
+                                <i class="fa fa-download text-primary text-2xl mb-2"></i>
+                                <span class="text-sm font-medium text-gray-700">导出数据</span>
                             </button>
                         </div>
                     </div>
                     
+                    <!-- 图表区域 -->
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div class="glass-card rounded-xl p-6">
+                            <h3 class="text-lg font-bold text-gray-800 mb-4">各部门考核通过率</h3>
+                            <div class="h-80">
+                                <canvas id="deptPassRateChart"></canvas>
+                            </div>
+                        </div>
+                        <div class="glass-card rounded-xl p-6">
+                            <h3 class="text-lg font-bold text-gray-800 mb-4">近6个月考核趋势</h3>
+                            <div class="h-80">
+                                <canvas id="assessmentTrendChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    
                     <!-- 最近考核 -->
-                    <div class="glass-card p-8">
-                        <div class="flex items-center justify-between mb-8">
-                            <h2 class="text-2xl font-bold text-gray-800">最近考核记录</h2>
-                            <button onclick="navigateTo('assessments')" 
-                                class="text-primary font-semibold text-lg flex items-center hover:underline">
-                                查看全部 <i class="fa fa-arrow-right ml-2"></i>
+                    <div class="glass-card rounded-xl p-6">
+                        <div class="flex items-center justify-between mb-6">
+                            <h2 class="text-lg font-bold text-gray-800">最近考核记录</h2>
+                            <button onclick="navigateTo('assessments')" class="text-primary text-sm font-medium flex items-center">
+                                查看全部 <i class="fa fa-arrow-right ml-1"></i>
                             </button>
                         </div>
-                        
                         <div class="overflow-x-auto">
-                            <table class="table-modern min-w-full">
+                            <table class="w-full">
                                 <thead>
-                                    <tr>
-                                        <th class="px-8 py-6 text-left font-semibold text-gray-700">考核名称</th>
-                                        <th class="px-8 py-6 text-left font-semibold text-gray-700">考核日期</th>
-                                        <th class="px-8 py-6 text-left font-semibold text-gray-700">参与人数</th>
-                                        <th class="px-8 py-6 text-left font-semibold text-gray-700">通过率</th>
-                                        <th class="px-8 py-6 text-left font-semibold text-gray-700">状态</th>
-                                        <th class="px-8 py-6 text-left font-semibold text-gray-700">操作</th>
+                                    <tr class="text-left text-sm text-gray-500 border-b">
+                                        <th class="pb-3">考核名称</th>
+                                        <th class="pb-3">考核日期</th>
+                                        <th class="pb-3">参与人数</th>
+                                        <th class="pb-3">通过率</th>
+                                        <th class="pb-3">状态</th>
+                                        <th class="pb-3">操作</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    ${getAssessments().slice(0, 3).map(assessment => `
-                                        <tr class="hover:bg-gradient-to-r hover:from-primary/5 hover:to-transparent">
-                                            <td class="px-8 py-6">
-                                                <div class="font-semibold text-gray-800">${assessment.name}</div>
-                                                <div class="text-sm text-gray-500">${assessment.id}</div>
-                                            </td>
-                                            <td class="px-8 py-6 font-medium">${assessment.date}</td>
-                                            <td class="px-8 py-6">
+                                    ${assessments.slice(0, 3).map(assessment => `
+                                        <tr class="border-b hover:bg-gray-50">
+                                            <td class="py-4 font-medium">${assessment.name}</td>
+                                            <td class="py-4">${assessment.date}</td>
+                                            <td class="py-4">${assessment.participants}人</td>
+                                            <td class="py-4">
                                                 <div class="flex items-center">
-                                                    <i class="fa fa-users text-gray-400 mr-2"></i>
-                                                    <span class="font-semibold">${assessment.participants}人</span>
-                                                </div>
-                                            </td>
-                                            <td class="px-8 py-6">
-                                                <div class="flex items-center">
-                                                    <div class="w-24 bg-gray-200 rounded-full h-2.5 mr-3">
-                                                        <div class="bg-success h-2.5 rounded-full" style="width: ${assessment.passRate}%"></div>
+                                                    <div class="w-20 bg-gray-200 rounded-full h-2 mr-2">
+                                                        <div class="bg-success h-2 rounded-full" style="width: ${assessment.passRate}%"></div>
                                                     </div>
-                                                    <span class="font-semibold text-gray-800">${assessment.passRate}%</span>
+                                                    <span class="text-sm">${assessment.passRate}%</span>
                                                 </div>
                                             </td>
-                                            <td class="px-8 py-6">
-                                                <span class="badge ${assessment.status === 'completed' ? 'badge-success' : 'badge-warning'}">
+                                            <td class="py-4">
+                                                <span class="px-3 py-1 ${assessment.status === 'completed' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'} rounded-full text-sm">
                                                     ${assessment.status === 'completed' ? '已完成' : '进行中'}
                                                 </span>
                                             </td>
-                                            <td class="px-8 py-6">
-                                                <button onclick="viewAssessmentDetail('${assessment.id}')" 
-                                                    class="text-primary font-medium hover:underline">
-                                                    查看详情
-                                                </button>
+                                            <td class="py-4">
+                                                <button onclick="viewAssessmentDetail('${assessment.id}')" class="text-primary text-sm hover:underline">查看详情</button>
                                             </td>
                                         </tr>
                                     `).join('')}
@@ -1717,8 +1357,522 @@
             `;
         }
 
+        async function loadRankings() {
+            const rankings = getRankings();
+            
+            return `
+                <div class="space-y-6 animate-fade-in">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h1 class="text-xl font-bold text-gray-800">成绩排名</h1>
+                            <p class="text-gray-500 mt-1">实时更新的大队综合排名</p>
+                        </div>
+                        <div class="flex space-x-2">
+                            <select class="border border-gray-300 rounded-xl px-4 py-2 text-sm focus:ring-2 focus:ring-primary focus:border-transparent">
+                                <option>全部项目</option>
+                                <option>体能项目</option>
+                                <option>技能项目</option>
+                            </select>
+                            <button onclick="exportRankings()" class="btn-primary text-sm px-4 py-2 rounded-xl">
+                                <i class="fa fa-download mr-2"></i>导出排名
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- 排名卡片 -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div class="glass-card rounded-xl p-6">
+                            <h3 class="text-lg font-bold text-gray-800 mb-4">综合排名前10</h3>
+                            <div class="space-y-3">
+                                ${rankings.overall.slice(0, 10).map((rank, index) => `
+                                    <div class="flex items-center justify-between p-3 hover:bg-gray-50 rounded-lg transition-colors">
+                                        <div class="flex items-center">
+                                            <span class="h-8 w-8 rounded-full ${index < 3 ? 'gradient-bg text-white' : 'bg-gray-100 text-gray-800'} flex items-center justify-center text-sm font-medium mr-3">
+                                                ${index + 1}
+                                            </span>
+                                            <div>
+                                                <p class="font-medium text-gray-800">${rank.name}</p>
+                                                <p class="text-xs text-gray-500">${rank.department}</p>
+                                            </div>
+                                        </div>
+                                        <span class="text-primary font-bold">${rank.score}分</span>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                        
+                        <div class="glass-card rounded-xl p-6">
+                            <h3 class="text-lg font-bold text-gray-800 mb-4">单项排名（3000米跑）</h3>
+                            <div class="space-y-3">
+                                ${rankings.items['3000米跑']?.slice(0, 10).map((rank, index) => `
+                                    <div class="flex items-center justify-between p-3 hover:bg-gray-50 rounded-lg transition-colors">
+                                        <div class="flex items-center">
+                                            <span class="h-8 w-8 rounded-full ${index < 3 ? 'gradient-bg text-white' : 'bg-gray-100 text-gray-800'} flex items-center justify-center text-sm font-medium mr-3">
+                                                ${index + 1}
+                                            </span>
+                                            <span class="font-medium text-gray-800">${rank.name}</span>
+                                        </div>
+                                        <div class="text-right">
+                                            <span class="text-primary font-bold">${rank.score}分</span>
+                                            <p class="text-xs text-gray-500">${rank.result}</p>
+                                        </div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                        
+                        <div class="glass-card rounded-xl p-6">
+                            <h3 class="text-lg font-bold text-gray-800 mb-4">部门平均分排名</h3>
+                            <div class="space-y-3">
+                                ${rankings.departments.map((dept, index) => `
+                                    <div class="flex items-center justify-between p-3 hover:bg-gray-50 rounded-lg transition-colors">
+                                        <div class="flex items-center">
+                                            <span class="h-8 w-8 rounded-full ${index < 3 ? 'gradient-bg text-white' : 'bg-gray-100 text-gray-800'} flex items-center justify-center text-sm font-medium mr-3">
+                                                ${index + 1}
+                                            </span>
+                                            <span class="font-medium text-gray-800">${dept.name}</span>
+                                        </div>
+                                        <div class="text-right">
+                                            <span class="text-primary font-bold">${dept.score}分</span>
+                                            <p class="text-xs text-gray-500">${dept.count}人</p>
+                                        </div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 完整排名表格 -->
+                    <div class="glass-card rounded-xl overflow-hidden">
+                        <div class="px-6 py-4 border-b bg-gray-50">
+                            <h3 class="text-lg font-bold text-gray-800">完整排名列表</h3>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="w-full">
+                                <thead>
+                                    <tr class="text-left text-sm text-gray-500 border-b">
+                                        <th class="px-6 py-3">排名</th>
+                                        <th class="px-6 py-3">姓名</th>
+                                        <th class="px-6 py-3">部门</th>
+                                        <th class="px-6 py-3">3000米跑</th>
+                                        <th class="px-6 py-3">引体向上</th>
+                                        <th class="px-6 py-3">负重跑</th>
+                                        <th class="px-6 py-3">综合得分</th>
+                                        <th class="px-6 py-3">操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${rankings.overall.slice(0, 20).map((rank, index) => `
+                                        <tr class="border-b hover:bg-gray-50">
+                                            <td class="px-6 py-4">
+                                                <span class="h-8 w-8 rounded-full ${index < 3 ? 'gradient-bg text-white' : 'bg-gray-100 text-gray-800'} flex items-center justify-center text-sm font-medium">
+                                                    ${index + 1}
+                                                </span>
+                                            </td>
+                                            <td class="px-6 py-4 font-medium">${rank.name}</td>
+                                            <td class="px-6 py-4">${rank.department}</td>
+                                            <td class="px-6 py-4">${rank.scores['3000米跑'] || '--'}</td>
+                                            <td class="px-6 py-4">${rank.scores['引体向上'] || '--'}</td>
+                                            <td class="px-6 py-4">${rank.scores['负重跑'] || '--'}</td>
+                                            <td class="px-6 py-4">
+                                                <span class="font-bold text-primary">${rank.score}</span>
+                                            </td>
+                                            <td class="px-6 py-4">
+                                                <button onclick="viewFirefighterDetail('${rank.id}')" class="text-primary text-sm hover:underline">查看详情</button>
+                                            </td>
+                                        </tr>
+                                    `).join('')}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        async function loadPersonnelManagement() {
+            const personnel = getFirefighters();
+            
+            return `
+                <div class="space-y-6 animate-fade-in">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h1 class="text-xl font-bold text-gray-800">人员管理</h1>
+                            <p class="text-gray-500 mt-1">管理员可随时修改人员信息</p>
+                        </div>
+                        <button onclick="showAddPersonnelModal()" class="btn-primary px-4 py-2 rounded-xl">
+                            <i class="fa fa-plus mr-2"></i>新增消防员
+                        </button>
+                    </div>
+                    
+                    <!-- 搜索筛选 -->
+                    <div class="glass-card rounded-xl p-6">
+                        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">姓名/编号</label>
+                                <input type="text" class="w-full px-4 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="搜索..." id="search-personnel">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">部门</label>
+                                <select class="w-full px-4 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent" id="filter-department">
+                                    <option value="">全部部门</option>
+                                    ${APP_CONFIG.departments.map(dept => `<option>${dept}</option>`).join('')}
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">职位</label>
+                                <select class="w-full px-4 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent" id="filter-position">
+                                    <option value="">全部职位</option>
+                                    <option>消防员</option>
+                                    <option>中队长</option>
+                                    <option>副中队长</option>
+                                    <option>指导员</option>
+                                </select>
+                            </div>
+                            <div class="flex items-end">
+                                <button onclick="searchPersonnel()" class="w-full btn-primary px-4 py-2 rounded-xl">
+                                    <i class="fa fa-search mr-2"></i>搜索
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 人员列表 -->
+                    <div class="glass-card rounded-xl overflow-hidden">
+                        <div class="px-6 py-4 border-b bg-gray-50 flex items-center justify-between">
+                            <h3 class="text-lg font-bold text-gray-800">消防员列表</h3>
+                            <div class="flex items-center space-x-2">
+                                <button onclick="batchExportPersonnel()" class="text-sm text-primary hover:underline">
+                                    <i class="fa fa-download mr-1"></i>批量导出
+                                </button>
+                                <button onclick="batchEditPersonnel()" class="text-sm text-primary hover:underline">
+                                    <i class="fa fa-edit mr-1"></i>批量修改
+                                </button>
+                            </div>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="w-full">
+                                <thead>
+                                    <tr class="text-left text-sm text-gray-500 border-b">
+                                        <th class="px-6 py-3"><input type="checkbox" id="select-all" class="rounded border-gray-300"></th>
+                                        <th class="px-6 py-3">编号</th>
+                                        <th class="px-6 py-3">姓名</th>
+                                        <th class="px-6 py-3">年龄</th>
+                                        <th class="px-6 py-3">性别</th>
+                                        <th class="px-6 py-3">部门</th>
+                                        <th class="px-6 py-3">职位</th>
+                                        <th class="px-6 py-3">入职日期</th>
+                                        <th class="px-6 py-3">操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${personnel.slice(0, 10).map(person => `
+                                        <tr class="border-b hover:bg-gray-50">
+                                            <td class="px-6 py-4"><input type="checkbox" class="personnel-checkbox rounded border-gray-300" data-id="${person.id}"></td>
+                                            <td class="px-6 py-4 font-medium">${person.id}</td>
+                                            <td class="px-6 py-4">${person.name}</td>
+                                            <td class="px-6 py-4">${person.age}</td>
+                                            <td class="px-6 py-4">${person.gender}</td>
+                                            <td class="px-6 py-4">
+                                                <span class="px-3 py-1 bg-primary/10 text-primary rounded-full text-xs">
+                                                    ${person.department}
+                                                </span>
+                                            </td>
+                                            <td class="px-6 py-4">${person.position}</td>
+                                            <td class="px-6 py-4">${person.joinDate}</td>
+                                            <td class="px-6 py-4">
+                                                <div class="flex space-x-2">
+                                                    <button onclick="editPersonnel('${person.id}')" class="text-primary hover:text-primary/80">
+                                                        <i class="fa fa-edit"></i>
+                                                    </button>
+                                                    <button onclick="viewPersonnelDetail('${person.id}')" class="text-gray-600 hover:text-gray-800">
+                                                        <i class="fa fa-eye"></i>
+                                                    </button>
+                                                    <button onclick="deletePersonnel('${person.id}')" class="text-red-600 hover:text-red-800">
+                                                        <i class="fa fa-trash"></i>
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    `).join('')}
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="px-6 py-4 border-t flex items-center justify-between">
+                            <div class="text-sm text-gray-500">
+                                显示 <span class="font-medium">1</span> 到 <span class="font-medium">${Math.min(personnel.length, 10)}</span> 条，共 <span class="font-medium">${personnel.length}</span> 条
+                            </div>
+                            <div class="flex space-x-2">
+                                <button class="px-3 py-1 border border-gray-300 rounded-lg hover:bg-gray-50">上一页</button>
+                                <button class="px-3 py-1 bg-primary text-white rounded-lg">1</button>
+                                <button class="px-3 py-1 border border-gray-300 rounded-lg hover:bg-gray-50">2</button>
+                                <button class="px-3 py-1 border border-gray-300 rounded-lg hover:bg-gray-50">3</button>
+                                <button class="px-3 py-1 border border-gray-300 rounded-lg hover:bg-gray-50">下一页</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        async function loadAssessmentManagement() {
+            const assessments = getAssessments();
+            const items = getAssessmentItems();
+            
+            return `
+                <div class="space-y-6 animate-fade-in">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h1 class="text-xl font-bold text-gray-800">考核管理</h1>
+                            <p class="text-gray-500 mt-1">管理考核项目和标准</p>
+                        </div>
+                        <div class="flex space-x-2">
+                            <button onclick="showAddAssessmentModal()" class="btn-primary px-4 py-2 rounded-xl">
+                                <i class="fa fa-plus mr-2"></i>新增考核
+                            </button>
+                            <button onclick="manageAssessmentItems()" class="btn-primary px-4 py-2 rounded-xl bg-gray-800 hover:bg-gray-900">
+                                <i class="fa fa-cog mr-2"></i>考核项目设置
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- 考核项目设置 -->
+                    <div class="glass-card rounded-xl p-6">
+                        <div class="flex items-center justify-between mb-6">
+                            <h3 class="text-lg font-bold text-gray-800">考核项目设置</h3>
+                            <button onclick="showAddAssessmentItemModal()" class="text-primary text-sm font-medium">
+                                <i class="fa fa-plus mr-1"></i>添加项目
+                            </button>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="w-full">
+                                <thead>
+                                    <tr class="text-left text-sm text-gray-500 border-b">
+                                        <th class="px-6 py-3">项目名称</th>
+                                        <th class="px-6 py-3">考核类型</th>
+                                        <th class="px-6 py-3">单位</th>
+                                        <th class="px-6 py-3">满分</th>
+                                        <th class="px-6 py-3">评分标准</th>
+                                        <th class="px-6 py-3">状态</th>
+                                        <th class="px-6 py-3">操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${items.map(item => `
+                                        <tr class="border-b hover:bg-gray-50">
+                                            <td class="px-6 py-4 font-medium">${item.name}</td>
+                                            <td class="px-6 py-4">
+                                                <span class="px-3 py-1 ${item.type === '体能' ? 'bg-blue-100 text-blue-800' : item.type === '技能' ? 'bg-green-100 text-green-800' : 'bg-purple-100 text-purple-800'} rounded-full text-xs">
+                                                    ${item.type}
+                                                </span>
+                                            </td>
+                                            <td class="px-6 py-4">${item.unit}</td>
+                                            <td class="px-6 py-4 font-bold text-primary">${item.maxScore}</td>
+                                            <td class="px-6 py-4">
+                                                <button onclick="editAssessmentStandard('${item.id}')" class="text-primary text-sm hover:underline">
+                                                    编辑标准
+                                                </button>
+                                            </td>
+                                            <td class="px-6 py-4">
+                                                <span class="px-3 py-1 ${item.active ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'} rounded-full text-xs">
+                                                    ${item.active ? '启用' : '禁用'}
+                                                </span>
+                                            </td>
+                                            <td class="px-6 py-4">
+                                                <div class="flex space-x-2">
+                                                    <button onclick="editAssessmentItem('${item.id}')" class="text-primary hover:text-primary/80">
+                                                        <i class="fa fa-edit"></i>
+                                                    </button>
+                                                    <button onclick="toggleAssessmentItem('${item.id}')" class="text-gray-600 hover:text-gray-800">
+                                                        <i class="fa fa-power-off"></i>
+                                                    </button>
+                                                    <button onclick="deleteAssessmentItem('${item.id}')" class="text-red-600 hover:text-red-800">
+                                                        <i class="fa fa-trash"></i>
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    `).join('')}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    <!-- 考核列表 -->
+                    <div class="glass-card rounded-xl overflow-hidden">
+                        <div class="px-6 py-4 border-b bg-gray-50">
+                            <h3 class="text-lg font-bold text-gray-800">考核列表</h3>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="w-full">
+                                <thead>
+                                    <tr class="text-left text-sm text-gray-500 border-b">
+                                        <th class="px-6 py-3">考核编号</th>
+                                        <th class="px-6 py-3">考核名称</th>
+                                        <th class="px-6 py-3">考核日期</th>
+                                        <th class="px-6 py-3">考核类型</th>
+                                        <th class="px-6 py-3">参与人数</th>
+                                        <th class="px-6 py-3">通过率</th>
+                                        <th class="px-6 py-3">状态</th>
+                                        <th class="px-6 py-3">操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${assessments.map(assessment => `
+                                        <tr class="border-b hover:bg-gray-50">
+                                            <td class="px-6 py-4 font-medium">${assessment.id}</td>
+                                            <td class="px-6 py-4">${assessment.name}</td>
+                                            <td class="px-6 py-4">${assessment.date}</td>
+                                            <td class="px-6 py-4">
+                                                <span class="px-3 py-1 ${assessment.type === '体能' ? 'bg-blue-100 text-blue-800' : 'bg-green-100 text-green-800'} rounded-full text-xs">
+                                                    ${assessment.type}
+                                                </span>
+                                            </td>
+                                            <td class="px-6 py-4">${assessment.participants}人</td>
+                                            <td class="px-6 py-4">
+                                                <div class="flex items-center">
+                                                    <div class="w-20 bg-gray-200 rounded-full h-2 mr-2">
+                                                        <div class="bg-success h-2 rounded-full" style="width: ${assessment.passRate}%"></div>
+                                                    </div>
+                                                    <span class="text-sm">${assessment.passRate}%</span>
+                                                </div>
+                                            </td>
+                                            <td class="px-6 py-4">
+                                                <span class="px-3 py-1 ${assessment.status === 'completed' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'} rounded-full text-xs">
+                                                    ${assessment.status === 'completed' ? '已完成' : '进行中'}
+                                                </span>
+                                            </td>
+                                            <td class="px-6 py-4">
+                                                <div class="flex space-x-2">
+                                                    <button onclick="viewAssessmentDetail('${assessment.id}')" class="text-primary hover:text-primary/80">
+                                                        <i class="fa fa-eye"></i>
+                                                    </button>
+                                                    <button onclick="editAssessment('${assessment.id}')" class="text-gray-600 hover:text-gray-800">
+                                                        <i class="fa fa-edit"></i>
+                                                    </button>
+                                                    <button onclick="importAssessmentResults('${assessment.id}')" class="text-success hover:text-success/80">
+                                                        <i class="fa fa-upload"></i>
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    `).join('')}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        async function loadSystemSettings() {
+            const settings = getSystemSettings();
+            
+            return `
+                <div class="space-y-6 animate-fade-in">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h1 class="text-xl font-bold text-gray-800">系统设置</h1>
+                            <p class="text-gray-500 mt-1">高级管理员可修改所有系统设置</p>
+                        </div>
+                        <button onclick="saveSystemSettings()" class="btn-primary px-4 py-2 rounded-xl">
+                            <i class="fa fa-save mr-2"></i>保存设置
+                        </button>
+                    </div>
+                    
+                    <!-- 设置标签页 -->
+                    <div class="glass-card rounded-xl overflow-hidden">
+                        <div class="border-b">
+                            <div class="flex space-x-1 px-4">
+                                <button data-tab="basic" class="tab-btn px-4 py-3 font-medium text-gray-600 hover:text-gray-800 border-b-2 border-transparent hover:border-primary">
+                                    基本设置
+                                </button>
+                                <button data-tab="assessment" class="tab-btn px-4 py-3 font-medium text-gray-600 hover:text-gray-800 border-b-2 border-transparent hover:border-primary">
+                                    考核标准
+                                </button>
+                                <button data-tab="users" class="tab-btn px-4 py-3 font-medium text-gray-600 hover:text-gray-800 border-b-2 border-transparent hover:border-primary">
+                                    用户管理
+                                </button>
+                                <button data-tab="permissions" class="tab-btn px-4 py-3 font-medium text-gray-600 hover:text-gray-800 border-b-2 border-transparent hover:border-primary">
+                                    权限管理
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="p-6">
+                            <!-- 基本设置 -->
+                            <div id="tab-basic" class="tab-content">
+                                <div class="max-w-2xl space-y-6">
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-2">系统名称</label>
+                                        <input type="text" class="w-full px-4 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent" value="${settings.systemName}" id="system-name">
+                                    </div>
+                                    
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-2">单位名称</label>
+                                        <input type="text" class="w-full px-4 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent" value="${settings.organization}" id="organization">
+                                    </div>
+                                    
+                                    <div class="grid grid-cols-2 gap-4">
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 mb-2">默认考核周期</label>
+                                            <select class="w-full px-4 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent" id="default-period">
+                                                <option ${settings.defaultPeriod === 'monthly' ? 'selected' : ''}>月度考核</option>
+                                                <option ${settings.defaultPeriod === 'quarterly' ? 'selected' : ''}>季度考核</option>
+                                                <option ${settings.defaultPeriod === 'yearly' ? 'selected' : ''}>年度考核</option>
+                                            </select>
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 mb-2">及格分数线</label>
+                                            <input type="number" class="w-full px-4 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent" value="${settings.passScore}" id="pass-score">
+                                        </div>
+                                    </div>
+                                    
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-2">系统主题</label>
+                                        <div class="flex space-x-4">
+                                            <label class="flex items-center">
+                                                <input type="radio" name="theme" value="light" ${settings.theme === 'light' ? 'checked' : ''} class="h-4 w-4 text-primary">
+                                                <span class="ml-2">浅色主题</span>
+                                            </label>
+                                            <label class="flex items-center">
+                                                <input type="radio" name="theme" value="dark" ${settings.theme === 'dark' ? 'checked' : ''} class="h-4 w-4 text-primary">
+                                                <span class="ml-2">深色主题</span>
+                                            </label>
+                                            <label class="flex items-center">
+                                                <input type="radio" name="theme" value="auto" ${settings.theme === 'auto' ? 'checked' : ''} class="h-4 w-4 text-primary">
+                                                <span class="ml-2">自动</span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- 其他标签页内容（简化） -->
+                            <div id="tab-assessment" class="tab-content hidden">
+                                <p class="text-gray-600">考核标准设置功能开发中...</p>
+                            </div>
+                            <div id="tab-users" class="tab-content hidden">
+                                <p class="text-gray-600">用户管理功能开发中...</p>
+                            </div>
+                            <div id="tab-permissions" class="tab-content hidden">
+                                <p class="text-gray-600">权限管理功能开发中...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
         // ==================== 数据获取函数 ====================
         function getMyScores() {
+            // 从本地存储获取或返回模拟数据
+            const stored = localStorage.getItem('firefighter_scores');
+            if (stored) {
+                return JSON.parse(stored);
+            }
+            
+            // 模拟数据
             return [
                 { item: '3000米跑', result: '12:35', score: 92, evaluation: '优秀', date: '2024-12-15' },
                 { item: '单杠引体向上', result: '25次', score: 88, evaluation: '良好', date: '2024-12-15' },
@@ -1736,9 +1890,17 @@
                         severity: 'high',
                         advice: '需要增加爆发力训练，每周进行2次短跑冲刺练习',
                         schedule: '周一、周三下午'
+                    },
+                    {
+                        item: '灭火器操作',
+                        score: 82,
+                        severity: 'medium',
+                        advice: '操作流程需加强，建议进行模拟演练',
+                        schedule: '周五上午'
                     }
                 ],
-                trend: 8
+                trend: 8,
+                rankImprovement: 5
             };
         }
 
@@ -1749,7 +1911,7 @@
                     value: '128人',
                     trend: 3.2,
                     icon: 'fa-users',
-                    color: 'bg-gradient-to-br from-primary to-primary-light',
+                    color: 'bg-primary',
                     onclick: 'navigateTo("personnel")'
                 },
                 {
@@ -1757,7 +1919,7 @@
                     value: '32次',
                     trend: 8.5,
                     icon: 'fa-clipboard-check',
-                    color: 'bg-gradient-to-br from-secondary to-secondary-light',
+                    color: 'bg-secondary',
                     onclick: 'navigateTo("assessments")'
                 },
                 {
@@ -1765,7 +1927,7 @@
                     value: '92.5%',
                     trend: 2.1,
                     icon: 'fa-check-circle',
-                    color: 'bg-gradient-to-br from-success to-emerald-400',
+                    color: 'bg-success',
                     onclick: 'showPassRateDetail()'
                 },
                 {
@@ -1773,13 +1935,58 @@
                     value: '96.9%',
                     trend: -1.2,
                     icon: 'fa-user-check',
-                    color: 'bg-gradient-to-br from-warning to-amber-400',
+                    color: 'bg-warning',
                     onclick: 'showAttendanceDetail()'
                 }
             ];
         }
 
+        function getRankings() {
+            // 模拟排名数据
+            return {
+                overall: Array.from({length: 50}, (_, i) => ({
+                    id: `FD${String(i+1).padStart(3, '0')}`,
+                    name: i === 0 ? '郑金秀' : `消防员${i+1}`,
+                    department: i < 10 ? '阳东大队' : i < 20 ? '特勤一中队' : i < 30 ? '特勤二中队' : '战勤保障',
+                    score: 95 - Math.floor(i / 5),
+                    scores: {
+                        '3000米跑': 95 - i,
+                        '引体向上': 92 - i,
+                        '负重跑': 90 - i
+                    }
+                })),
+                departments: [
+                    { name: '阳东大队', score: 89.5, count: 128, maxScore: 98, minScore: 72 },
+                    { name: '特勤一中队', score: 87.2, count: 38, maxScore: 96, minScore: 75 },
+                    { name: '特勤二中队', score: 85.7, count: 32, maxScore: 94, minScore: 70 },
+                    { name: '战勤保障大队', score: 84.3, count: 42, maxScore: 92, minScore: 68 }
+                ],
+                items: {
+                    '3000米跑': Array.from({length: 10}, (_, i) => ({
+                        name: `消防员${i+1}`,
+                        score: 95 - i,
+                        result: `${Math.floor(10 + i/2)}:${30 + i*2}`
+                    }))
+                }
+            };
+        }
+
+        function getFirefighters() {
+            const stored = localStorage.getItem('firefighters');
+            if (stored) {
+                return JSON.parse(stored);
+            }
+            
+            // 返回初始模拟数据
+            return initMockData().firefighters;
+        }
+
         function getAssessments() {
+            const stored = localStorage.getItem('assessments');
+            if (stored) {
+                return JSON.parse(stored);
+            }
+            
             return [
                 {
                     id: 'AS202412001',
@@ -1802,66 +2009,334 @@
             ];
         }
 
-        function getRankings() {
+        function getAssessmentItems() {
+            return APP_CONFIG.assessmentItems;
+        }
+
+        function getSystemSettings() {
+            const stored = localStorage.getItem('system_settings');
+            if (stored) {
+                return JSON.parse(stored);
+            }
+            
             return {
-                overall: Array.from({length: 20}, (_, i) => ({
-                    id: `FD${String(i+1).padStart(3, '0')}`,
-                    name: i === 0 ? '郑金秀' : `消防员${i+1}`,
-                    department: i < 5 ? '阳东大队' : i < 10 ? '特勤一中队' : i < 15 ? '特勤二中队' : '战勤保障',
-                    score: 95 - Math.floor(i / 2),
-                    scores: {
-                        '3000米跑': 95 - i,
-                        '引体向上': 92 - i,
-                        '负重跑': 90 - i
-                    }
-                }))
+                systemName: '阳东消防考核管理系统',
+                organization: '阳东消防救援大队',
+                defaultPeriod: 'monthly',
+                passScore: 60,
+                theme: 'light'
             };
         }
 
-        // ==================== 工具函数 ====================
+        // ==================== 数据初始化 ====================
         function initMockData() {
-            const firefighters = Array.from({length: 20}, (_, i) => ({
+            // 模拟消防员数据
+            const firefighters = Array.from({length: 50}, (_, i) => ({
                 id: `FD${String(i+1).padStart(3, '0')}`,
                 name: i === 0 ? '郑金秀' : `消防员${i+1}`,
                 age: 25 + Math.floor(Math.random() * 15),
                 gender: Math.random() > 0.1 ? '男' : '女',
-                department: i < 5 ? '阳东大队' : i < 10 ? '特勤一中队' : i < 15 ? '特勤二中队' : '战勤保障',
-                position: i === 0 ? '中队长' : i < 3 ? '副中队长' : i < 5 ? '指导员' : '消防员',
+                department: i < 10 ? '阳东大队' : i < 20 ? '特勤一中队' : i < 30 ? '特勤二中队' : '战勤保障',
+                position: i === 0 ? '中队长' : i < 5 ? '副中队长' : i < 10 ? '指导员' : '消防员',
                 joinDate: `202${Math.floor(Math.random() * 4)}-${String(Math.floor(Math.random() * 12) + 1).padStart(2, '0')}-${String(Math.floor(Math.random() * 28) + 1).padStart(2, '0')}`
             }));
             
+            // 保存到本地存储
             localStorage.setItem('firefighters', JSON.stringify(firefighters));
+            
+            return { firefighters };
         }
 
+        // ==================== 页面组件初始化 ====================
+        function initPageComponents(page) {
+            switch(page) {
+                case 'dashboard':
+                    initDashboardCharts();
+                    break;
+                case 'rankings':
+                    initRankingCharts();
+                    break;
+                case 'settings':
+                    initSettingsTabs();
+                    break;
+            }
+            
+            // 初始化标签页
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const tab = this.dataset.tab;
+                    showTab(tab);
+                });
+            });
+        }
+
+        function showTab(tab) {
+            // 更新标签按钮状态
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                if (btn.dataset.tab === tab) {
+                    btn.classList.add('border-primary', 'text-primary');
+                    btn.classList.remove('border-transparent', 'text-gray-600');
+                } else {
+                    btn.classList.remove('border-primary', 'text-primary');
+                    btn.classList.add('border-transparent', 'text-gray-600');
+                }
+            });
+            
+            // 显示对应的标签内容
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.add('hidden');
+            });
+            
+            document.getElementById(`tab-${tab}`)?.classList.remove('hidden');
+        }
+
+        function initDashboardCharts() {
+            // 部门通过率图表
+            const deptCtx = document.getElementById('deptPassRateChart');
+            if (deptCtx) {
+                setTimeout(() => {
+                    new Chart(deptCtx, {
+                        type: 'bar',
+                        data: {
+                            labels: ['特勤一中队', '特勤二中队', '战勤保障', '训练基地', '阳东大队'],
+                            datasets: [{
+                                label: '通过率',
+                                data: [92, 88, 95, 85, 92.5],
+                                backgroundColor: [
+                                    'rgba(231, 29, 54, 0.8)',
+                                    'rgba(231, 29, 54, 0.6)',
+                                    'rgba(231, 29, 54, 0.4)',
+                                    'rgba(231, 29, 54, 0.2)',
+                                    'rgba(10, 36, 99, 0.8)'
+                                ]
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            plugins: {
+                                legend: { display: false }
+                            },
+                            scales: {
+                                y: {
+                                    beginAtZero: true,
+                                    max: 100,
+                                    ticks: {
+                                        callback: value => value + '%'
+                                    }
+                                }
+                            }
+                        }
+                    });
+                }, 100);
+            }
+            
+            // 考核趋势图表
+            const trendCtx = document.getElementById('assessmentTrendChart');
+            if (trendCtx) {
+                setTimeout(() => {
+                    new Chart(trendCtx, {
+                        type: 'line',
+                        data: {
+                            labels: ['7月', '8月', '9月', '10月', '11月', '12月'],
+                            datasets: [{
+                                label: '考核人数',
+                                data: [110, 115, 118, 122, 125, 128],
+                                borderColor: '#0A2463',
+                                backgroundColor: 'rgba(10, 36, 99, 0.1)',
+                                tension: 0.3
+                            }, {
+                                label: '通过率',
+                                data: [88, 89, 90, 91, 92, 92.5],
+                                borderColor: '#E71D36',
+                                backgroundColor: 'rgba(231, 29, 54, 0.1)',
+                                tension: 0.3
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            scales: {
+                                y: {
+                                    beginAtZero: true,
+                                    max: 150
+                                }
+                            }
+                        }
+                    });
+                }, 100);
+            }
+        }
+
+        function initSettingsTabs() {
+            // 默认显示第一个标签页
+            showTab('basic');
+        }
+
+        // ==================== 导出功能 ====================
+        function exportRankings() {
+            try {
+                showLoading('正在导出排名数据...');
+                
+                const rankings = getRankings();
+                
+                // 创建工作簿
+                const wb = XLSX.utils.book_new();
+                
+                // 创建综合排名工作表
+                const overallData = rankings.overall.map((rank, index) => ({
+                    排名: index + 1,
+                    姓名: rank.name,
+                    部门: rank.department,
+                    综合得分: rank.score,
+                    体能得分: rank.scores['体能'] || '',
+                    技能得分: rank.scores['技能'] || '',
+                    理论得分: rank.scores['理论'] || ''
+                }));
+                
+                const wsOverall = XLSX.utils.json_to_sheet(overallData);
+                XLSX.utils.book_append_sheet(wb, wsOverall, '综合排名');
+                
+                // 创建部门排名工作表
+                const deptData = rankings.departments.map((dept, index) => ({
+                    排名: index + 1,
+                    部门: dept.name,
+                    平均分: dept.score,
+                    人数: dept.count,
+                    最高分: dept.maxScore,
+                    最低分: dept.minScore
+                }));
+                
+                const wsDept = XLSX.utils.json_to_sheet(deptData);
+                XLSX.utils.book_append_sheet(wb, wsDept, '部门排名');
+                
+                // 导出文件
+                const fileName = `消防考核排名_${new Date().toLocaleDateString()}.xlsx`;
+                XLSX.writeFile(wb, fileName);
+                
+                showNotification('导出成功', `排名数据已导出为 ${fileName}`);
+            } catch (error) {
+                showNotification('导出失败', '请检查网络连接后重试', 'error');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        function exportDashboardData() {
+            try {
+                showLoading('正在准备导出数据...');
+                
+                const stats = getDashboardStats();
+                const assessments = getAssessments();
+                
+                // 创建工作簿
+                const wb = XLSX.utils.book_new();
+                
+                // 统计数据
+                const statsData = stats.map(stat => ({
+                    指标: stat.label,
+                    数值: stat.value,
+                    变化趋势: stat.trend > 0 ? `上升 ${stat.trend}%` : `下降 ${Math.abs(stat.trend)}%`
+                }));
+                
+                const wsStats = XLSX.utils.json_to_sheet(statsData);
+                XLSX.utils.book_append_sheet(wb, wsStats, '统计概览');
+                
+                // 考核数据
+                const assessmentData = assessments.map(assessment => ({
+                    考核名称: assessment.name,
+                    考核日期: assessment.date,
+                    考核类型: assessment.type,
+                    参与人数: assessment.participants,
+                    通过率: `${assessment.passRate}%`,
+                    状态: assessment.status === 'completed' ? '已完成' : '进行中'
+                }));
+                
+                const wsAssessments = XLSX.utils.json_to_sheet(assessmentData);
+                XLSX.utils.book_append_sheet(wb, wsAssessments, '考核记录');
+                
+                // 导出文件
+                const fileName = `消防考核数据_${new Date().toLocaleDateString()}.xlsx`;
+                XLSX.writeFile(wb, fileName);
+                
+                showNotification('导出成功', `数据已导出为 ${fileName}`);
+            } catch (error) {
+                showNotification('导出失败', '导出过程中出现错误', 'error');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        // ==================== 网络监控 ====================
+        function monitorNetwork() {
+            const updateNetworkStatus = () => {
+                const isOnline = navigator.onLine;
+                const indicator = document.getElementById('network-indicator');
+                const networkStatus = document.getElementById('network-status');
+                
+                if (indicator) {
+                    indicator.innerHTML = `
+                        <i class="fa fa-${isOnline ? 'wifi' : 'signal'} mr-1"></i>
+                        ${isOnline ? '在线' : '离线'}
+                    `;
+                    indicator.className = `px-3 py-1 ${isOnline ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'} rounded-full text-xs`;
+                }
+                
+                if (networkStatus) {
+                    if (isOnline) {
+                        networkStatus.classList.add('hidden');
+                    } else {
+                        networkStatus.classList.remove('hidden');
+                        networkStatus.innerHTML = `
+                            <i class="fa fa-exclamation-triangle mr-1"></i>
+                            <span>当前处于离线模式</span>
+                        `;
+                    }
+                }
+            };
+            
+            // 初始状态
+            updateNetworkStatus();
+            
+            // 监听网络状态变化
+            window.addEventListener('online', updateNetworkStatus);
+            window.addEventListener('offline', updateNetworkStatus);
+        }
+
+        // ==================== UI 辅助函数 ====================
         function showNotification(title, message, type = 'success') {
             const notification = document.getElementById('notification');
             const titleEl = document.getElementById('notification-title');
             const messageEl = document.getElementById('notification-message');
             
-            let borderColor = 'border-l-success';
+            // 设置通知类型
+            let borderColor = 'border-success';
             let icon = 'fa-check-circle';
             
             if (type === 'error') {
-                borderColor = 'border-l-secondary';
+                borderColor = 'border-secondary';
                 icon = 'fa-exclamation-circle';
             } else if (type === 'warning') {
-                borderColor = 'border-l-warning';
+                borderColor = 'border-warning';
                 icon = 'fa-exclamation-triangle';
             } else if (type === 'info') {
-                borderColor = 'border-l-primary';
+                borderColor = 'border-primary';
                 icon = 'fa-info-circle';
             }
             
-            notification.className = `fixed top-6 right-6 z-50 transform translate-x-full transition-transform duration-500 ${borderColor}`;
-            notification.querySelector('.flex-shrink-0').innerHTML = `<i class="fa ${icon} fa-2x"></i>`;
+            // 更新内容
+            notification.className = `fixed top-4 right-4 z-50 transform translate-x-full transition-transform duration-300 border-l-4 ${borderColor}`;
+            notification.querySelector('.flex-shrink-0').innerHTML = `<i class="fa ${icon} fa-lg"></i>`;
             titleEl.textContent = title;
             messageEl.textContent = message;
             
+            // 显示通知
             setTimeout(() => {
                 notification.classList.remove('translate-x-full');
             }, 10);
             
-            setTimeout(hideNotification, 4000);
+            // 自动隐藏
+            setTimeout(() => {
+                hideNotification();
+            }, 3000);
         }
 
         function hideNotification() {
@@ -1869,10 +2344,10 @@
             notification.classList.add('translate-x-full');
         }
 
-        function showLoading(message = '请稍候...') {
+        function showLoading(message = '加载中...') {
             const loadingEl = document.getElementById('loading-overlay');
             if (loadingEl) {
-                document.getElementById('loading-message').textContent = message;
+                loadingEl.querySelector('span').textContent = message;
                 loadingEl.classList.remove('hidden');
             }
         }
@@ -1890,130 +2365,240 @@
         }
 
         function hideSkeleton(container) {
+            // 移除骨架屏动画
             container.querySelectorAll('.skeleton').forEach(el => {
                 el.classList.remove('skeleton');
-                el.classList.add('bg-gray-100');
+                el.classList.add('bg-gray-200');
             });
-        }
-
-        function monitorNetwork() {
-            const updateNetworkStatus = () => {
-                const isOnline = navigator.onLine;
-                const indicator = document.getElementById('network-indicator');
-                
-                if (indicator) {
-                    indicator.innerHTML = `
-                        <i class="fa fa-${isOnline ? 'wifi' : 'signal'} mr-2"></i>
-                        ${isOnline ? '在线' : '离线'}
-                    `;
-                    indicator.className = `px-4 py-2 ${isOnline ? 'bg-gradient-to-r from-green-100 to-emerald-100 text-green-800' : 'bg-gradient-to-r from-yellow-100 to-amber-100 text-yellow-800'} rounded-xl font-medium`;
-                }
-            };
-            
-            updateNetworkStatus();
-            window.addEventListener('online', updateNetworkStatus);
-            window.addEventListener('offline', updateNetworkStatus);
-        }
-
-        function updateDateTime() {
-            const now = new Date();
-            const dateStr = now.toLocaleDateString('zh-CN', {
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric',
-                weekday: 'long'
-            });
-            const timeStr = now.toLocaleTimeString('zh-CN', {
-                hour: '2-digit',
-                minute: '2-digit'
-            });
-            
-            const dateTimeElement = document.getElementById('current-datetime');
-            if (dateTimeElement) {
-                dateTimeElement.textContent = `${dateStr} ${timeStr}`;
-            }
-        }
-
-        // ==================== 页面组件初始化 ====================
-        function initPageComponents(page) {
-            switch(page) {
-                case 'dashboard':
-                    initDashboardCharts();
-                    break;
-                case 'settings':
-                    initSettingsTabs();
-                    break;
-            }
-            
-            // 初始化标签页
-            document.querySelectorAll('.tab-btn').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    showTab(this.dataset.tab);
-                });
-            });
-        }
-
-        function showTab(tab) {
-            document.querySelectorAll('.tab-btn').forEach(btn => {
-                btn.classList.toggle('active', btn.dataset.tab === tab);
-            });
-            
-            document.querySelectorAll('.tab-content').forEach(content => {
-                content.classList.toggle('hidden', !content.id.includes(tab));
-            });
-        }
-
-        // ==================== 导出功能 ====================
-        function exportRankings() {
-            try {
-                showLoading('正在导出排名数据...');
-                
-                const rankings = getRankings();
-                const wb = XLSX.utils.book_new();
-                
-                const overallData = rankings.overall.map((rank, index) => ({
-                    排名: index + 1,
-                    姓名: rank.name,
-                    部门: rank.department,
-                    综合得分: rank.score,
-                    '3000米跑': rank.scores['3000米跑'],
-                    引体向上: rank.scores['引体向上'],
-                    负重跑: rank.scores['负重跑']
-                }));
-                
-                const wsOverall = XLSX.utils.json_to_sheet(overallData);
-                XLSX.utils.book_append_sheet(wb, wsOverall, '综合排名');
-                
-                const fileName = `消防考核排名_${new Date().toLocaleDateString()}.xlsx`;
-                XLSX.writeFile(wb, fileName);
-                
-                showNotification('导出成功', `排名数据已导出为 ${fileName}`);
-            } catch (error) {
-                showNotification('导出失败', '请检查网络连接后重试', 'error');
-            } finally {
-                hideLoading();
-            }
-        }
-
-        function exportDashboardData() {
-            showNotification('功能提示', '数据导出功能开发中...', 'info');
         }
 
         // ==================== 示例功能函数 ====================
         function showProgressChart() {
-            showNotification('功能提示', '进步分析图表功能开发中...', 'info');
+            // 创建模态框
+            const modal = document.createElement('div');
+            modal.className = 'fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4';
+            modal.innerHTML = `
+                <div class="bg-white rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-hidden animate-fade-in">
+                    <div class="gradient-bg px-6 py-4">
+                        <div class="flex items-center justify-between">
+                            <h3 class="text-lg font-semibold text-white">个人进步分析</h3>
+                            <button class="text-white hover:text-gray-200 close-modal">
+                                <i class="fa fa-times"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="p-6 overflow-y-auto max-h-[calc(90vh-120px)]">
+                        <div class="space-y-4">
+                            <div class="h-64">
+                                <canvas id="progressChartModal"></canvas>
+                            </div>
+                            <div class="text-sm text-gray-500">
+                                <i class="fa fa-info-circle mr-1"></i>
+                                图表显示最近6个月的成绩变化趋势
+                            </div>
+                        </div>
+                    </div>
+                    <div class="px-6 py-4 border-t flex justify-end">
+                        <button class="close-modal px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-xl">
+                            关闭
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+            
+            // 初始化图表
+            setTimeout(() => {
+                const ctx = document.getElementById('progressChartModal');
+                if (ctx) {
+                    new Chart(ctx, {
+                        type: 'line',
+                        data: {
+                            labels: ['7月', '8月', '9月', '10月', '11月', '12月'],
+                            datasets: [{
+                                label: '个人成绩',
+                                data: [85, 87, 90, 88, 92, 94],
+                                borderColor: '#0A2463',
+                                backgroundColor: 'rgba(10, 36, 99, 0.1)',
+                                tension: 0.3,
+                                fill: true
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            scales: {
+                                y: {
+                                    beginAtZero: true,
+                                    max: 100
+                                }
+                            }
+                        }
+                    });
+                }
+            }, 100);
+            
+            // 关闭事件
+            modal.querySelectorAll('.close-modal').forEach(btn => {
+                btn.addEventListener('click', () => modal.remove());
+            });
+            
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    modal.remove();
+                }
+            });
         }
 
         function showWeaknessAnalysis() {
-            showNotification('功能提示', '弱势项目分析功能开发中...', 'info');
+            const modal = document.createElement('div');
+            modal.className = 'fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4';
+            modal.innerHTML = `
+                <div class="bg-white rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-hidden animate-fade-in">
+                    <div class="gradient-bg px-6 py-4">
+                        <div class="flex items-center justify-between">
+                            <h3 class="text-lg font-semibold text-white">弱势项目分析</h3>
+                            <button class="text-white hover:text-gray-200 close-modal">
+                                <i class="fa fa-times"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="p-6 overflow-y-auto max-h-[calc(90vh-120px)]">
+                        <div class="space-y-6">
+                            <div class="bg-red-50 border border-red-200 rounded-xl p-4">
+                                <div class="flex items-center mb-3">
+                                    <i class="fa fa-exclamation-triangle text-red-500 text-xl mr-3"></i>
+                                    <div>
+                                        <h3 class="font-bold text-gray-800">需要重点关注的弱势项目</h3>
+                                        <p class="text-sm text-gray-600">根据最近3次考核数据分析得出</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="space-y-3">
+                                    <div class="bg-white rounded-lg p-3">
+                                        <div class="flex items-center justify-between mb-2">
+                                            <h4 class="font-medium text-gray-800">100米负重跑</h4>
+                                            <span class="text-red-600 font-bold">78分</span>
+                                        </div>
+                                        <div class="w-full bg-gray-200 rounded-full h-2">
+                                            <div class="bg-red-500 h-2 rounded-full" style="width: 78%"></div>
+                                        </div>
+                                        <p class="text-sm text-gray-600 mt-2">
+                                            <i class="fa fa-lightbulb-o mr-1"></i>
+                                            建议：增加爆发力训练，每周进行2次短跑冲刺练习
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="grid grid-cols-2 gap-4">
+                                <div class="bg-blue-50 p-3 rounded-lg border border-blue-200">
+                                    <p class="text-sm text-blue-600 mb-1">训练频率建议</p>
+                                    <p class="font-medium">每周3次专项训练</p>
+                                </div>
+                                <div class="bg-green-50 p-3 rounded-lg border border-green-200">
+                                    <p class="text-sm text-green-600 mb-1">预计提升时间</p>
+                                    <p class="font-medium">1-2个月可见效果</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="px-6 py-4 border-t flex justify-end">
+                        <button class="close-modal px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-xl">
+                            关闭
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+            
+            // 关闭事件
+            modal.querySelectorAll('.close-modal').forEach(btn => {
+                btn.addEventListener('click', () => modal.remove());
+            });
+            
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    modal.remove();
+                }
+            });
         }
 
         function showAddAssessmentModal() {
             showNotification('功能提示', '新增考核功能开发中...', 'info');
         }
 
-        function showImportModal() {
-            showNotification('功能提示', '导入成绩功能开发中...', 'info');
+        function showAddAssessmentItemModal() {
+            showNotification('功能提示', '新增考核项目功能开发中...', 'info');
+        }
+
+        function manageAssessmentItems() {
+            showNotification('功能提示', '考核项目管理功能开发中...', 'info');
+        }
+
+        function showAddPersonnelModal() {
+            showNotification('功能提示', '新增消防员功能开发中...', 'info');
+        }
+
+        function searchPersonnel() {
+            showNotification('搜索提示', '人员搜索功能开发中...', 'info');
+        }
+
+        function batchExportPersonnel() {
+            showNotification('功能提示', '批量导出功能开发中...', 'info');
+        }
+
+        function batchEditPersonnel() {
+            showNotification('功能提示', '批量修改功能开发中...', 'info');
+        }
+
+        function editPersonnel(id) {
+            showNotification('功能提示', `编辑消防员 ${id} 功能开发中...`, 'info');
+        }
+
+        function viewPersonnelDetail(id) {
+            showNotification('功能提示', `查看消防员 ${id} 详情功能开发中...`, 'info');
+        }
+
+        function deletePersonnel(id) {
+            if (confirm(`确定要删除消防员 ${id} 吗？`)) {
+                showNotification('删除成功', `消防员 ${id} 已删除`, 'success');
+            }
+        }
+
+        function editAssessmentStandard(id) {
+            showNotification('功能提示', `编辑考核标准功能开发中...`, 'info');
+        }
+
+        function editAssessmentItem(id) {
+            showNotification('功能提示', `编辑考核项目功能开发中...`, 'info');
+        }
+
+        function toggleAssessmentItem(id) {
+            showNotification('功能提示', `切换考核项目状态功能开发中...`, 'info');
+        }
+
+        function deleteAssessmentItem(id) {
+            if (confirm('确定要删除这个考核项目吗？')) {
+                showNotification('删除成功', '考核项目已删除', 'success');
+            }
+        }
+
+        function viewAssessmentDetail(id) {
+            showNotification('功能提示', `查看考核详情功能开发中...`, 'info');
+        }
+
+        function editAssessment(id) {
+            showNotification('功能提示', `编辑考核功能开发中...`, 'info');
+        }
+
+        function importAssessmentResults(id) {
+            showNotification('功能提示', `导入考核结果功能开发中...`, 'info');
+        }
+
+        function viewFirefighterDetail(id) {
+            showNotification('功能提示', `查看消防员详情功能开发中...`, 'info');
         }
 
         function showPassRateDetail() {
@@ -2024,18 +2609,38 @@
             showNotification('功能提示', '参考率详情功能开发中...', 'info');
         }
 
-        function viewAssessmentDetail(id) {
-            showNotification('功能提示', `查看考核 ${id} 详情功能开发中...`, 'info');
+        function saveSystemSettings() {
+            const systemName = document.getElementById('system-name')?.value;
+            const organization = document.getElementById('organization')?.value;
+            const defaultPeriod = document.getElementById('default-period')?.value;
+            const passScore = document.getElementById('pass-score')?.value;
+            
+            if (systemName && organization) {
+                const settings = {
+                    systemName,
+                    organization,
+                    defaultPeriod,
+                    passScore: parseInt(passScore) || 60,
+                    theme: document.querySelector('input[name="theme"]:checked')?.value || 'light'
+                };
+                
+                localStorage.setItem('system_settings', JSON.stringify(settings));
+                showNotification('保存成功', '系统设置已保存');
+            }
         }
 
         function logout() {
             if (confirm('确定要退出登录吗？')) {
+                // 清除当前用户
                 currentUser = null;
-                pageHistory = [];
-                currentPage = 'dashboard';
                 
+                // 返回登录页面
                 document.getElementById('login-page').classList.remove('hidden');
                 document.getElementById('app-container').classList.add('hidden');
+                
+                // 重置页面历史
+                pageHistory = [];
+                currentPage = 'dashboard';
                 
                 showNotification('已退出登录', '欢迎下次使用');
             }
@@ -2050,202 +2655,26 @@
         window.showProgressChart = showProgressChart;
         window.showWeaknessAnalysis = showWeaknessAnalysis;
         window.showAddAssessmentModal = showAddAssessmentModal;
-        window.showImportModal = showImportModal;
+        window.showAddAssessmentItemModal = showAddAssessmentItemModal;
+        window.manageAssessmentItems = manageAssessmentItems;
+        window.showAddPersonnelModal = showAddPersonnelModal;
+        window.searchPersonnel = searchPersonnel;
+        window.batchExportPersonnel = batchExportPersonnel;
+        window.batchEditPersonnel = batchEditPersonnel;
+        window.editPersonnel = editPersonnel;
+        window.viewPersonnelDetail = viewPersonnelDetail;
+        window.deletePersonnel = deletePersonnel;
+        window.editAssessmentStandard = editAssessmentStandard;
+        window.editAssessmentItem = editAssessmentItem;
+        window.toggleAssessmentItem = toggleAssessmentItem;
+        window.deleteAssessmentItem = deleteAssessmentItem;
+        window.viewAssessmentDetail = viewAssessmentDetail;
+        window.editAssessment = editAssessment;
+        window.importAssessmentResults = importAssessmentResults;
+        window.viewFirefighterDetail = viewFirefighterDetail;
         window.showPassRateDetail = showPassRateDetail;
         window.showAttendanceDetail = showAttendanceDetail;
-        window.viewAssessmentDetail = viewAssessmentDetail;
-
-        // 页面加载函数（需要在页面加载后调用的函数）
-        async function loadMyScores() {
-            return `
-                <div class="space-y-8 animate-fade-in-up">
-                    <div class="glass-card p-8">
-                        <h1 class="text-3xl font-bold text-gray-800 mb-2">我的成绩</h1>
-                        <p class="text-gray-600">查看个人历史考核成绩和进步情况</p>
-                    </div>
-                    <div class="text-center py-16 text-gray-500">
-                        <i class="fa fa-chart-line text-6xl mb-4 opacity-30"></i>
-                        <p class="text-xl">我的成绩页面开发中...</p>
-                    </div>
-                </div>
-            `;
-        }
-
-        async function loadRankings() {
-            const rankings = getRankings();
-            
-            return `
-                <div class="space-y-8 animate-fade-in-up">
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <h1 class="text-3xl font-bold text-gray-800">成绩排名</h1>
-                            <p class="text-gray-600 mt-2">实时更新的大队综合排名</p>
-                        </div>
-                        <button onclick="exportRankings()" class="btn-primary px-8 py-4 rounded-2xl text-lg">
-                            <i class="fa fa-download mr-3"></i>导出排名
-                        </button>
-                    </div>
-                    
-                    <!-- 排名表格 -->
-                    <div class="glass-card overflow-hidden">
-                        <div class="px-8 py-6 border-b border-gray-200/50">
-                            <div class="flex items-center justify-between">
-                                <h3 class="text-xl font-bold text-gray-800">综合成绩排名</h3>
-                                <div class="flex items-center space-x-4">
-                                    <div class="relative">
-                                        <select class="appearance-none bg-white border border-gray-300 rounded-xl px-5 py-3 pr-10 focus:ring-2 focus:ring-primary focus:border-transparent">
-                                            <option>全部项目</option>
-                                            <option>体能项目</option>
-                                            <option>技能项目</option>
-                                        </select>
-                                        <div class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 pointer-events-none">
-                                            <i class="fa fa-chevron-down"></i>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="overflow-x-auto">
-                            <table class="table-modern min-w-full">
-                                <thead>
-                                    <tr>
-                                        <th class="px-8 py-6 text-left font-semibold text-gray-700">排名</th>
-                                        <th class="px-8 py-6 text-left font-semibold text-gray-700">姓名</th>
-                                        <th class="px-8 py-6 text-left font-semibold text-gray-700">部门</th>
-                                        <th class="px-8 py-6 text-left font-semibold text-gray-700">3000米跑</th>
-                                        <th class="px-8 py-6 text-left font-semibold text-gray-700">引体向上</th>
-                                        <th class="px-8 py-6 text-left font-semibold text-gray-700">综合得分</th>
-                                        <th class="px-8 py-6 text-left font-semibold text-gray-700">操作</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    ${rankings.overall.slice(0, 10).map((rank, index) => `
-                                        <tr class="hover:bg-gradient-to-r hover:from-primary/5 hover:to-transparent">
-                                            <td class="px-8 py-6">
-                                                <div class="flex items-center">
-                                                    <span class="h-12 w-12 rounded-2xl ${index < 3 ? 'gradient-bg' : 'bg-gray-100'} flex items-center justify-center text-${index < 3 ? 'white' : 'gray-800'} font-bold text-lg">
-                                                        ${index + 1}
-                                                    </span>
-                                                </div>
-                                            </td>
-                                            <td class="px-8 py-6">
-                                                <div class="flex items-center">
-                                                    <div class="h-12 w-12 rounded-2xl ${index < 3 ? 'gradient-bg' : 'bg-gray-100'} flex items-center justify-center mr-4">
-                                                        <i class="fa fa-user ${index < 3 ? 'text-white' : 'text-gray-600'}"></i>
-                                                    </div>
-                                                    <div>
-                                                        <p class="font-semibold text-gray-800">${rank.name}</p>
-                                                        <p class="text-sm text-gray-500">${rank.id}</p>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                            <td class="px-8 py-6">
-                                                <span class="badge badge-primary">${rank.department}</span>
-                                            </td>
-                                            <td class="px-8 py-6">
-                                                <div class="font-bold text-primary">${rank.scores['3000米跑']}分</div>
-                                            </td>
-                                            <td class="px-8 py-6">
-                                                <div class="font-bold text-primary">${rank.scores['引体向上']}分</div>
-                                            </td>
-                                            <td class="px-8 py-6">
-                                                <div class="text-2xl font-bold text-primary">${rank.score}</div>
-                                            </td>
-                                            <td class="px-8 py-6">
-                                                <button class="text-primary font-medium hover:underline">
-                                                    查看详情
-                                                </button>
-                                            </td>
-                                        </tr>
-                                    `).join('')}
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            `;
-        }
-
-        async function loadPersonnelManagement() {
-            return `
-                <div class="space-y-8 animate-fade-in-up">
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <h1 class="text-3xl font-bold text-gray-800">人员管理</h1>
-                            <p class="text-gray-600 mt-2">管理员可随时修改人员信息</p>
-                        </div>
-                        <button onclick="showAddPersonnelModal()" class="btn-primary px-8 py-4 rounded-2xl text-lg">
-                            <i class="fa fa-plus mr-3"></i>新增消防员
-                        </button>
-                    </div>
-                    <div class="text-center py-16 text-gray-500">
-                        <i class="fa fa-users text-6xl mb-4 opacity-30"></i>
-                        <p class="text-xl">人员管理页面开发中...</p>
-                    </div>
-                </div>
-            `;
-        }
-
-        async function loadAssessmentManagement() {
-            return `
-                <div class="space-y-8 animate-fade-in-up">
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <h1 class="text-3xl font-bold text-gray-800">考核管理</h1>
-                            <p class="text-gray-600 mt-2">管理考核项目和标准</p>
-                        </div>
-                        <button onclick="showAddAssessmentModal()" class="btn-primary px-8 py-4 rounded-2xl text-lg">
-                            <i class="fa fa-plus mr-3"></i>新增考核
-                        </button>
-                    </div>
-                    <div class="text-center py-16 text-gray-500">
-                        <i class="fa fa-clipboard-check text-6xl mb-4 opacity-30"></i>
-                        <p class="text-xl">考核管理页面开发中...</p>
-                    </div>
-                </div>
-            `;
-        }
-
-        async function loadSystemSettings() {
-            return `
-                <div class="space-y-8 animate-fade-in-up">
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <h1 class="text-3xl font-bold text-gray-800">系统设置</h1>
-                            <p class="text-gray-600 mt-2">高级管理员可修改所有系统设置</p>
-                        </div>
-                        <button onclick="saveSystemSettings()" class="btn-primary px-8 py-4 rounded-2xl text-lg">
-                            <i class="fa fa-save mr-3"></i>保存设置
-                        </button>
-                    </div>
-                    <div class="text-center py-16 text-gray-500">
-                        <i class="fa fa-cog text-6xl mb-4 opacity-30"></i>
-                        <p class="text-xl">系统设置页面开发中...</p>
-                    </div>
-                </div>
-            `;
-        }
-
-        function showAddPersonnelModal() {
-            showNotification('功能提示', '新增消防员功能开发中...', 'info');
-        }
-
-        function saveSystemSettings() {
-            showNotification('保存成功', '系统设置已保存');
-        }
-
-        function initDashboardCharts() {
-            // 图表初始化
-            setTimeout(() => {
-                // 这里可以初始化图表
-                console.log('Dashboard charts initialized');
-            }, 100);
-        }
-
-        function initSettingsTabs() {
-            showTab('basic');
-        }
+        window.saveSystemSettings = saveSystemSettings;
     </script>
 </body>
 </html>
